@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking | Northline Studio</title>
+  <meta name="description" content="Select a fixed-price package, choose a slot, and simulate the Square booking and checkout flow." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="booking">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">N</span>
+        <span><strong>Northline Studio</strong><small>Premium home care</small></span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav">
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="booking.html">Book</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero reveal">
+        <p class="eyebrow">Booking flow</p>
+        <h1>Structured like a Square Appointments handoff.</h1>
+        <p>Select a package, choose an availability slot, and move into full online payment.</p>
+      </section>
+
+      <section class="booking-layout">
+        <form class="booking-form reveal" id="booking-form">
+          <div class="form-card">
+            <h2>1. Choose service</h2>
+            <div class="service-options" id="service-options"></div>
+          </div>
+
+          <div class="form-card">
+            <h2>2. Pick timing</h2>
+            <div class="slot-grid" id="slot-grid"></div>
+          </div>
+
+          <div class="form-card">
+            <h2>3. Customer details</h2>
+            <div class="field-grid">
+              <label>
+                Full name
+                <input type="text" name="fullName" required />
+              </label>
+              <label>
+                Email
+                <input type="email" name="email" required />
+              </label>
+              <label>
+                Phone
+                <input type="tel" name="phone" required />
+              </label>
+              <label>
+                Service address
+                <input type="text" name="address" required />
+              </label>
+            </div>
+            <label>
+              Access notes
+              <textarea name="notes" rows="4" placeholder="Gate codes, parking notes, pets, or prep details"></textarea>
+            </label>
+          </div>
+
+          <div class="form-card">
+            <h2>4. Finish checkout</h2>
+            <p class="helper-copy">In production, this button would hand off to Square Appointments checkout.</p>
+            <button type="submit" class="button button-primary button-block">Continue To Secure Checkout</button>
+          </div>
+        </form>
+
+        <aside class="booking-summary reveal reveal-delay-1">
+          <div class="summary-card">
+            <p class="eyebrow">Booking summary</p>
+            <h2 id="summary-service">Select a service</h2>
+            <div class="summary-row">
+              <span>Price</span>
+              <strong id="summary-price">$0</strong>
+            </div>
+            <div class="summary-row">
+              <span>Duration</span>
+              <strong id="summary-duration">-</strong>
+            </div>
+            <div class="summary-row">
+              <span>Slot</span>
+              <strong id="summary-slot">Pick a time</strong>
+            </div>
+            <div class="divider"></div>
+            <p class="mini-label">Live stack mapping</p>
+            <ul class="check-list compact">
+              <li>Booking -> Square Appointments</li>
+              <li>Customer -> HubSpot contact</li>
+              <li>Payment -> Deal stage “Paid”</li>
+            </ul>
+          </div>
+          <div class="success-card is-hidden" id="booking-success">
+            <p class="eyebrow">Prototype success</p>
+            <h2>Booking captured.</h2>
+            <p id="booking-success-copy"></p>
+            <a class="button button-secondary button-block" href="contact.html">Need a custom scope instead?</a>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>Northline Studio</strong>
+        <p>Booking prototype aligned to Square + HubSpot flow.</p>
+      </div>
+      <div class="footer-links">
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="site.js"></script>
+</body>
+</html>

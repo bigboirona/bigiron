@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ | Northline Studio</title>
+  <meta name="description" content="FAQ page with expandable answers for booking, payments, and custom quote expectations." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="faq">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">N</span>
+        <span><strong>Northline Studio</strong><small>Premium home care</small></span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav">
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="booking.html">Book</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero reveal">
+        <p class="eyebrow">Questions, answered</p>
+        <h1>Designed to remove friction before people bounce.</h1>
+        <p>These accordions are ready for a Webflow CMS FAQ collection or static page build.</p>
+      </section>
+
+      <section class="faq-list reveal reveal-delay-1">
+        <details class="faq-item" open>
+          <summary>Do I pay during booking?</summary>
+          <p>Yes for fixed packages. In production this would route to Square checkout so the booking and payment happen in one flow.</p>
+        </details>
+        <details class="faq-item">
+          <summary>What if my scope is more complicated?</summary>
+          <p>Use the custom quote form. That route is designed for larger or less standardized jobs and should create a HubSpot deal in “New Inquiry.”</p>
+        </details>
+        <details class="faq-item">
+          <summary>How do confirmations work?</summary>
+          <p>Square Appointments would handle immediate confirmation, reminders, and payment receipts by email or SMS.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Can I change my appointment later?</summary>
+          <p>Yes. In production, customers would manage changes through the scheduler link in their confirmation message.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>Northline Studio</strong>
+        <p>FAQ prototype for trust and conversion support.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="site.js"></script>
+</body>
+</html>
