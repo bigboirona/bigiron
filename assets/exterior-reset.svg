@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Exterior reset illustration</title>
+  <desc id="desc">Stylized home exterior with tools and landscaping accents.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f7efe2"/>
+      <stop offset="100%" stop-color="#ead7bf"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#sky)"/>
+  <rect y="620" width="1200" height="280" fill="#d1a97f"/>
+  <rect x="250" y="260" width="700" height="380" rx="24" fill="#f9f3ea" stroke="#8f3e18" stroke-width="10"/>
+  <polygon points="210,320 600,120 990,320" fill="#17352b"/>
+  <rect x="330" y="360" width="160" height="140" rx="16" fill="#dfe7e2" stroke="#17352b" stroke-width="8"/>
+  <rect x="710" y="360" width="160" height="140" rx="16" fill="#dfe7e2" stroke="#17352b" stroke-width="8"/>
+  <rect x="530" y="410" width="140" height="230" rx="12" fill="#cb5f2d"/>
+  <circle cx="640" cy="525" r="10" fill="#fffaf2"/>
+  <rect x="120" y="500" width="90" height="170" rx="14" fill="#8f3e18"/>
+  <rect x="130" y="470" width="70" height="50" rx="10" fill="#cb5f2d"/>
+  <circle cx="1000" cy="520" r="70" fill="#4b7b5f"/>
+  <rect x="990" y="580" width="20" height="110" fill="#8f3e18"/>
+  <text x="600" y="760" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#171412">Exterior Reset</text>
+</svg>

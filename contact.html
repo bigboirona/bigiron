@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact | Big Iron Construction</title>
+  <meta name="description" content="Request a custom quote from Big Iron Construction for repairs, handyman work, and larger home improvement scopes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="contact">
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">BI</span>
+        <span><strong>Big Iron Construction</strong><small>Handyman & home repair</small></span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" class="site-nav">
+        <a href="services.html">Services</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="booking.html">Book</a>
+        <a href="about.html">About</a>
+        <a href="faq.html">FAQ</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero reveal">
+        <p class="eyebrow">Custom quote intake</p>
+        <h1>Tell us about the job and we’ll follow up with next steps.</h1>
+        <p>This form is for larger scopes, multi-item punch lists, or jobs that need a more tailored estimate.</p>
+      </section>
+
+      <section class="contact-layout">
+        <form class="contact-form reveal" id="contact-form">
+          <div class="field-grid">
+            <label>
+              Full name
+              <input type="text" name="fullName" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="phone" required />
+            </label>
+            <label>
+              Service needed
+              <select name="serviceType" required>
+                <option value="">Select a category</option>
+                <option>Custom exterior project</option>
+                <option>Interior multi-room scope</option>
+                <option>Seasonal maintenance bundle</option>
+                <option>Commercial / recurring service</option>
+              </select>
+            </label>
+            <label>
+              Preferred timing
+              <select name="timing" required>
+                <option value="">Select a window</option>
+                <option>ASAP</option>
+                <option>Within 1 week</option>
+                <option>Within 2 weeks</option>
+                <option>Just exploring</option>
+              </select>
+            </label>
+            <label>
+              Property / project address
+              <input type="text" name="address" />
+            </label>
+          </div>
+
+          <label>
+            Project details
+            <textarea name="message" rows="6" required placeholder="Scope, priorities, access notes, and any other helpful context"></textarea>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="button button-primary">Submit Quote Request</button>
+            <p class="helper-copy">This local version stores the form data in the browser so the flow can be reviewed before a live form destination is connected.</p>
+          </div>
+        </form>
+
+        <aside class="crm-panel reveal reveal-delay-1">
+          <div class="summary-card">
+            <p class="eyebrow">Lead flow</p>
+            <h2>Next-step stages</h2>
+            <ul class="pipeline-list">
+              <li class="is-active">New Inquiry</li>
+              <li>Contacted</li>
+              <li>Booked</li>
+              <li>Paid</li>
+              <li>Completed</li>
+              <li>Lost</li>
+            </ul>
+          </div>
+          <div class="success-card is-hidden" id="contact-success">
+            <p class="eyebrow">Request captured</p>
+            <h2>Lead saved.</h2>
+            <p id="contact-success-copy"></p>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <strong>Big Iron Construction</strong>
+        <p>Quote request flow for custom handyman and repair work.</p>
+      </div>
+      <div class="footer-links">
+        <a href="portfolio.html">Portfolio</a>
+        <a href="booking.html">Booking</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="site.js"></script>
+</body>
+</html>
