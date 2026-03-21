@@ -682,6 +682,27 @@ main {
   line-height: 1.35;
 }
 
+.city-links-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.service-area-card {
+  display: block;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.service-area-card:hover,
+.service-area-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(184, 90, 37, 0.34);
+  box-shadow: 0 16px 34px rgba(47, 30, 18, 0.08);
+}
+
+.service-area-line {
+  margin: 10px 0 0;
+  max-width: 720px;
+}
+
 .review-card {
   padding: 24px;
 }
@@ -960,7 +981,8 @@ select:focus {
   .stats-band,
   .field-grid,
   .story-grid,
-  .services-grid {
+  .services-grid,
+  .city-links-grid {
     grid-template-columns: 1fr;
   }
 
