@@ -442,6 +442,10 @@ main {
   background: #dcc2a5;
 }
 
+.portfolio-image-roof {
+  object-position: center 18%;
+}
+
 .portfolio-copy {
   padding: 22px 24px 24px;
 }
