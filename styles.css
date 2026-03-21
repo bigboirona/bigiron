@@ -159,6 +159,32 @@ main {
   padding: 0;
 }
 
+body[data-page="home"] main {
+  gap: 24px;
+}
+
+body[data-page="home"] .hero {
+  gap: 14px;
+}
+
+body[data-page="home"] .hero .hero-text {
+  margin: 10px 0 0;
+}
+
+body[data-page="home"] .hero + .reveal {
+  display: grid;
+  gap: 6px;
+  margin-top: -8px;
+}
+
+body[data-page="home"] .hero + .reveal .section-intro {
+  margin: 0;
+}
+
+body[data-page="home"] .portfolio-preview {
+  margin-top: -6px;
+}
+
 .hero h1,
 .page-hero h1 {
   margin: 0;
