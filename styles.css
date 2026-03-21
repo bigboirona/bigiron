@@ -703,6 +703,25 @@ main {
   max-width: 720px;
 }
 
+.service-area-groups {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.secondary-city-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.secondary-city-card {
+  background: rgba(248, 240, 229, 0.86);
+}
+
+.secondary-city-card h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
 .review-card {
   padding: 24px;
 }
@@ -983,6 +1002,10 @@ select:focus {
   .story-grid,
   .services-grid,
   .city-links-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .secondary-city-grid {
     grid-template-columns: 1fr;
   }
 
