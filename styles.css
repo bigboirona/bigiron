@@ -56,7 +56,7 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 22px 0;
+  padding: 18px 0;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -102,12 +102,17 @@ select {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 22px;
+  justify-content: flex-end;
+  gap: 28px;
+  margin-left: auto;
 }
 
 .site-nav a {
   color: var(--muted);
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
 }
 
 .site-nav a:hover,
@@ -151,7 +156,7 @@ main {
   gap: 18px;
   align-items: center;
   min-height: auto;
-  padding: 2px 0 0;
+  padding: 0;
 }
 
 .hero h1,
@@ -193,7 +198,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .button {
@@ -248,7 +253,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 
 .trust-row li {
@@ -593,17 +598,17 @@ main {
 }
 
 .hero-panel-compact .glass-card {
-  padding: 18px;
+  padding: 16px;
 }
 
 .hero-panel-compact h2 {
-  margin: 6px 0 8px;
+  margin: 4px 0 6px;
   font-family: "Space Grotesk", sans-serif;
   font-size: clamp(1.2rem, 2vw, 1.55rem);
 }
 
 .hero-panel-compact .hero-text {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 0.96rem;
 }
 
