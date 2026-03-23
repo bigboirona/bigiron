@@ -160,11 +160,11 @@ main {
 }
 
 body[data-page="home"] main {
-  gap: 24px;
+  gap: 18px;
 }
 
 body[data-page="home"] .hero {
-  gap: 14px;
+  gap: 10px;
 }
 
 body[data-page="home"] .hero .hero-text {
@@ -174,7 +174,7 @@ body[data-page="home"] .hero .hero-text {
 body[data-page="home"] .hero + .reveal {
   display: grid;
   gap: 6px;
-  margin-top: -8px;
+  margin-top: -18px;
 }
 
 body[data-page="home"] .hero + .reveal .section-intro {
@@ -182,7 +182,7 @@ body[data-page="home"] .hero + .reveal .section-intro {
 }
 
 body[data-page="home"] .portfolio-preview {
-  margin-top: -6px;
+  margin-top: -18px;
 }
 
 .hero h1,
