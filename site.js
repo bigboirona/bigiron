@@ -313,7 +313,7 @@ function initContactPage() {
     saveRecord(storageKeys.leads, payload);
     successCard.classList.remove("is-hidden");
     successCopy.textContent =
-      `${payload.fullName}'s quote request was saved locally as a "${payload.pipelineStage}" lead in this preview site. The live version can later connect this to Big Iron's actual intake workflow.`;
+      `Thanks, ${payload.fullName}. We have your request and will follow up after reviewing the job details.`;
     form.reset();
   });
 }

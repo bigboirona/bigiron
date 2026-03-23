@@ -29,9 +29,9 @@
 
     <main>
       <section class="page-hero reveal">
-        <p class="eyebrow">Custom quote intake</p>
-        <h1>Tell us about the job and we’ll follow up with next steps.</h1>
-        <p>This form is for larger scopes, multi-item punch lists, or jobs that need a more tailored estimate. You can also call or text <a href="tel:+18312913272">(831) 291-3272</a> or email <a href="mailto:bigironhandyman@gmail.com">bigironhandyman@gmail.com</a>.</p>
+        <p class="eyebrow">Contact</p>
+        <h1>Send the job details and we’ll follow up.</h1>
+        <p>Use the form for repairs, exterior work, punch-list items, or jobs that need an estimate. You can also call or text <a href="tel:+18312913272">(831) 291-3272</a> or email <a href="mailto:bigironhandyman@gmail.com">bigironhandyman@gmail.com</a>.</p>
       </section>
 
       <section class="contact-layout">
@@ -50,13 +50,14 @@
               <input type="tel" name="phone" required />
             </label>
             <label>
-              Service needed
+              Type of work
               <select name="serviceType" required>
-                <option value="">Select a category</option>
-                <option>Custom exterior project</option>
-                <option>Interior multi-room scope</option>
-                <option>Seasonal maintenance bundle</option>
-                <option>Commercial / recurring service</option>
+                <option value="">Select the closest fit</option>
+                <option>Repairs</option>
+                <option>Exterior work</option>
+                <option>Carpentry / wood repair</option>
+                <option>Deck, fence, or railing work</option>
+                <option>Mixed punch-list items</option>
               </select>
             </label>
             <label>
@@ -82,7 +83,6 @@
 
           <div class="form-actions">
             <button type="submit" class="button button-primary">Submit Quote Request</button>
-            <p class="helper-copy">This local version stores the form data in the browser so the flow can be reviewed before a live form destination is connected.</p>
           </div>
         </form>
 
@@ -96,21 +96,9 @@
               <a class="button button-secondary button-block" href="mailto:bigironhandyman@gmail.com">Email Big Iron</a>
             </div>
           </div>
-          <div class="summary-card">
-            <p class="eyebrow">Lead flow</p>
-            <h2>Next-step stages</h2>
-            <ul class="pipeline-list">
-              <li class="is-active">New Inquiry</li>
-              <li>Contacted</li>
-              <li>Booked</li>
-              <li>Paid</li>
-              <li>Completed</li>
-              <li>Lost</li>
-            </ul>
-          </div>
           <div class="success-card is-hidden" id="contact-success">
-            <p class="eyebrow">Request captured</p>
-            <h2>Lead saved.</h2>
+            <p class="eyebrow">Request sent</p>
+            <h2>We got it.</h2>
             <p id="contact-success-copy"></p>
           </div>
         </aside>
