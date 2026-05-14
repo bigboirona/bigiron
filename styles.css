@@ -957,6 +957,268 @@ select:focus {
   border-color: rgba(184, 90, 37, 0.35);
 }
 
+.quote-hero {
+  max-width: 760px;
+}
+
+.quote-tool {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.quote-builder-panel,
+.quote-result-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(248, 239, 223, 0.94);
+  box-shadow: var(--shadow);
+}
+
+.quote-builder-panel {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+}
+
+.quote-result-panel {
+  position: sticky;
+  top: 96px;
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+}
+
+.quote-step-head h2 {
+  margin: 4px 0 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.quote-category-tabs,
+.quote-subcategory-tabs,
+.quote-modifier-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quote-category-tab,
+.quote-subcategory-tab {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: var(--muted);
+  background: rgba(252, 246, 237, 0.88);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.quote-category-tab.is-selected,
+.quote-subcategory-tab.is-selected {
+  color: white;
+  border-color: rgba(56, 67, 50, 0.7);
+  background: var(--forest);
+}
+
+.quote-subcategory-tab {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  background: rgba(252, 246, 237, 0.68);
+}
+
+.quote-service-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  max-height: 340px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.quote-service-option {
+  display: grid;
+  gap: 5px;
+  min-height: 84px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(252, 246, 237, 0.88);
+  text-align: left;
+  cursor: pointer;
+}
+
+.quote-service-option span,
+.quote-service-option em,
+.quote-selected-item span,
+.quote-empty,
+.quote-output-block p,
+.quote-total-band p {
+  color: var(--muted);
+}
+
+.quote-service-option em {
+  font-style: normal;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.quote-service-option.is-selected {
+  border-color: rgba(184, 90, 37, 0.58);
+  background: rgba(184, 90, 37, 0.12);
+  box-shadow: inset 0 0 0 2px rgba(184, 90, 37, 0.16);
+}
+
+.quote-detail-grid {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 14px;
+}
+
+.quote-fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.quote-fieldset legend {
+  margin-bottom: 10px;
+  font-weight: 800;
+}
+
+.quote-check {
+  display: inline-flex;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 9px;
+  width: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(252, 246, 237, 0.74);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.quote-check input {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.quote-actions {
+  margin-top: 0;
+}
+
+.quote-add-inline {
+  width: 100%;
+}
+
+.quote-total-band {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--forest), #586247);
+  color: #fff8ec;
+}
+
+.quote-total-band span {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: rgba(255, 248, 236, 0.76);
+}
+
+.quote-total-band strong {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1;
+}
+
+.quote-total-band p {
+  margin: 0;
+  color: rgba(255, 248, 236, 0.82);
+}
+
+.quote-selected-list {
+  display: grid;
+  gap: 10px;
+}
+
+.quote-selected-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(252, 246, 237, 0.82);
+}
+
+.quote-selected-item b {
+  white-space: nowrap;
+}
+
+.quote-selected-item > div {
+  display: grid;
+  gap: 4px;
+}
+
+.quote-selected-item button {
+  border: 0;
+  padding: 0;
+  color: var(--accent-deep);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 800;
+  text-align: right;
+}
+
+.quote-empty {
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+}
+
+.quote-output-block {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.quote-output-block .mini-label,
+.quote-output-block p {
+  margin: 0;
+}
+
+.quote-flag-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quote-flag-list li {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(184, 90, 37, 0.1);
+  color: var(--accent-deep);
+  font-weight: 700;
+}
+
+.quote-next-actions {
+  display: grid;
+  gap: 10px;
+}
+
 .faq-item {
   padding: 0;
   overflow: hidden;
@@ -1013,6 +1275,8 @@ select:focus {
 
 @media (max-width: 980px) {
   .hero,
+  .quote-hero,
+  .quote-tool,
   .section-grid,
   .booking-layout,
   .contact-layout,
@@ -1062,6 +1326,11 @@ select:focus {
   .booking-summary {
     position: static;
   }
+
+  .quote-result-panel {
+    position: static;
+    order: -1;
+  }
 }
 
 @media (max-width: 760px) {
@@ -1100,6 +1369,35 @@ select:focus {
 
   .carousel-arrow {
     display: none;
+  }
+
+  .quote-service-list,
+  .quote-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quote-category-tabs,
+  .quote-subcategory-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .quote-category-tab,
+  .quote-subcategory-tab {
+    flex: 0 0 auto;
+  }
+
+  .quote-service-list {
+    max-height: 300px;
+  }
+
+  .quote-actions .button {
+    width: 100%;
+  }
+
+  .quote-selected-item {
+    align-items: flex-start;
   }
 }
 
