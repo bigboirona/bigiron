@@ -94,17 +94,8 @@ const quoteCatalog = {
   ],
   modifiers: [
     { id: "two_story", label: "2-story / ladder access", low: 100, high: 250 },
-    { id: "three_story", label: "3-story / very high access", low: 250, high: 500 },
-    { id: "steep_access", label: "Steep or difficult access", low: 75, high: 250 },
-    { id: "demo_haulaway", label: "Demo / haul-away", low: 75, high: 300 },
-    { id: "dump_fee", label: "Disposal / dump fee", low: 75, high: 350 },
-    { id: "material_pickup", label: "Material pickup / sourcing", low: 40, high: 120 },
-    { id: "old_home", label: "Old home / hidden conditions", low: 50, high: 200 },
-    { id: "occupied_home", label: "Occupied-home protection", low: 35, high: 120 },
-    { id: "urgent", label: "Urgent / ASAP", percent: 15 },
-    { id: "weekend", label: "Weekend / holiday", percent: 20 },
-    { id: "premium_finish", label: "High-end finish expectations", percent: 15 },
-    { id: "bundle_discount", label: "Bundle / multi-item discount", percent: -8 },
+    { id: "hard_access", label: "Hard to access work area", low: 100, high: 300 },
+    { id: "steep_roof", label: "Steep roof / tricky pitch", low: 150, high: 450 },
   ],
 };
 
@@ -473,8 +464,9 @@ function calculateQuoteItem(service, quantity, modifiers, photosAvailable) {
   const flags = [];
   if (service.photos && !photosAvailable) flags.push("Photos recommended before final pricing");
   if (service.siteVisit) flags.push("Site visit may be required");
-  if (modifiers.some((modifier) => modifier.id === "old_home")) flags.push("Hidden conditions could change the range");
-  if (modifiers.some((modifier) => modifier.id === "urgent")) flags.push("Rush scheduling included");
+  if (modifiers.some((modifier) => ["two_story", "hard_access", "steep_roof"].includes(modifier.id))) {
+    flags.push("Access difficulty included");
+  }
 
   return { low, high, flags };
 }
@@ -493,7 +485,6 @@ function initQuotePage() {
   const scope = byId("quote-scope");
   const photos = byId("quote-photos");
   const modifierGrid = byId("quote-modifiers");
-  const addButton = byId("quote-add-service");
   const addTopButton = byId("quote-add-service-top");
   const resetButton = byId("quote-reset");
   const totalRange = byId("quote-total-range");
@@ -753,7 +744,6 @@ function initQuotePage() {
     renderPreview();
   }
 
-  addButton.addEventListener("click", addCurrentProject);
   addTopButton.addEventListener("click", addCurrentProject);
 
   contactLink.addEventListener("click", () => {
