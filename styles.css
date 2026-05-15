@@ -1056,9 +1056,7 @@ select:focus {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  max-height: none;
-  overflow: auto;
-  padding-right: 4px;
+  overflow: visible;
 }
 
 .quote-service-option {
@@ -1411,10 +1409,6 @@ select:focus {
   .quote-subcategory-tab {
     padding: 10px 9px;
     font-size: 0.86rem;
-  }
-
-  .quote-service-list {
-    max-height: 300px;
   }
 
   .quote-actions .button {
