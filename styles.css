@@ -1004,8 +1004,18 @@ select:focus {
   gap: 10px;
 }
 
+.quote-category-tabs,
+.quote-subcategory-tabs {
+  align-items: stretch;
+}
+
 .quote-category-tab,
 .quote-subcategory-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 10px 14px;
@@ -1013,6 +1023,10 @@ select:focus {
   background: rgba(252, 246, 237, 0.88);
   cursor: pointer;
   font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .quote-category-tab.is-selected,
@@ -1378,14 +1392,16 @@ select:focus {
 
   .quote-category-tabs,
   .quote-subcategory-tabs {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 4px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .quote-category-tab,
   .quote-subcategory-tab {
-    flex: 0 0 auto;
+    width: 100%;
+    padding: 10px 9px;
+    font-size: 0.86rem;
   }
 
   .quote-service-list {
