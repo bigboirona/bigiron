@@ -1016,6 +1016,10 @@ select:focus {
 
 .quote-subcategory-tabs {
   grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  padding: 10px;
+  border: 1px solid rgba(184, 90, 37, 0.18);
+  border-radius: var(--radius-md);
+  background: rgba(184, 90, 37, 0.07);
 }
 
 .quote-category-tab,
@@ -1049,7 +1053,15 @@ select:focus {
 .quote-subcategory-tab {
   padding: 10px 11px;
   font-size: 0.9rem;
-  background: rgba(252, 246, 237, 0.68);
+  color: var(--accent-deep);
+  border-color: rgba(184, 90, 37, 0.25);
+  background: rgba(255, 248, 236, 0.82);
+}
+
+.quote-subcategory-tab.is-selected {
+  color: white;
+  border-color: rgba(124, 57, 20, 0.62);
+  background: var(--accent);
 }
 
 .quote-service-list {
