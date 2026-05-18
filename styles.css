@@ -1376,7 +1376,6 @@ select:focus {
 
   .quote-result-panel {
     position: static;
-    order: -1;
   }
 }
 
