@@ -1014,12 +1014,21 @@ select:focus {
   align-items: stretch;
 }
 
-.quote-subcategory-tabs {
-  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
-  padding: 10px;
+.quote-subcategory-shell {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
   border: 1px solid rgba(184, 90, 37, 0.18);
   border-radius: var(--radius-md);
   background: rgba(184, 90, 37, 0.07);
+  box-shadow: inset 4px 0 0 rgba(184, 90, 37, 0.32);
+}
+
+.quote-subcategory-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .quote-category-tab,
@@ -1051,8 +1060,11 @@ select:focus {
 }
 
 .quote-subcategory-tab {
-  padding: 10px 11px;
-  font-size: 0.9rem;
+  width: auto;
+  min-height: 34px;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
   color: var(--accent-deep);
   border-color: rgba(184, 90, 37, 0.25);
   background: rgba(255, 248, 236, 0.82);
@@ -1417,10 +1429,19 @@ select:focus {
     gap: 8px;
   }
 
-  .quote-category-tab,
-  .quote-subcategory-tab {
+  .quote-subcategory-tabs {
+    display: flex;
+  }
+
+  .quote-category-tab {
     padding: 10px 9px;
     font-size: 0.86rem;
+  }
+
+  .quote-subcategory-tab {
+    flex: 1 1 calc(50% - 8px);
+    padding: 8px 10px;
+    font-size: 0.8rem;
   }
 
   .quote-actions .button {
