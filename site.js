@@ -31,6 +31,7 @@ const storageKeys = {
   leads: "bigiron_leads",
   quotePreviews: "bigiron_quote_previews",
   latestQuoteSummary: "bigiron_latest_quote_summary",
+  attribution: "bigiron_attribution",
 };
 
 let quoteCatalog = {
@@ -178,6 +179,59 @@ function saveRecord(key, payload) {
   const current = JSON.parse(localStorage.getItem(key) || "[]");
   current.push({ ...payload, capturedAt: new Date().toISOString() });
   localStorage.setItem(key, JSON.stringify(current));
+}
+
+function captureAttribution() {
+  const params = new URLSearchParams(window.location.search);
+  const fields = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"];
+  const attribution = {};
+  fields.forEach((field) => {
+    const value = params.get(field);
+    if (value) attribution[field] = value;
+  });
+  if (Object.keys(attribution).length) {
+    attribution.landingPage = window.location.pathname;
+    attribution.capturedAt = new Date().toISOString();
+    localStorage.setItem(storageKeys.attribution, JSON.stringify(attribution));
+  }
+}
+
+function currentAttribution() {
+  try {
+    return JSON.parse(localStorage.getItem(storageKeys.attribution) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function appendAttributionToUrl(url) {
+  const attribution = currentAttribution();
+  const source = attribution.utm_source;
+  if (!source) return url;
+  const next = new URL(url, window.location.href);
+  Object.entries(attribution).forEach(([key, value]) => {
+    if (key.startsWith("utm_") || key === "gclid" || key === "fbclid") {
+      next.searchParams.set(key, value);
+    }
+  });
+  return `${next.pathname}${next.search}${next.hash}`;
+}
+
+async function sendWebsiteLead(payload) {
+  const urls = [window.BIG_IRON_LEAD_API_URL, "/api/website-lead"].filter(Boolean);
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) return true;
+    } catch {
+      // Keep the local copy if the live API is not connected yet.
+    }
+  }
+  return false;
 }
 
 function initNav() {
@@ -422,6 +476,7 @@ function initContactPage() {
   const successCard = byId("contact-success");
   const successCopy = byId("contact-success-copy");
   const params = new URLSearchParams(window.location.search);
+  const attribution = currentAttribution();
   if (params.get("from") === "quote") {
     const quoteSummary = localStorage.getItem(storageKeys.latestQuoteSummary);
     const message = form.querySelector("textarea[name='message']");
@@ -445,10 +500,13 @@ function initContactPage() {
       timing: data.get("timing"),
       address: data.get("address"),
       message: data.get("message"),
+      attribution,
+      leadSource: attribution.utm_source || "website",
       pipelineStage: siteConfig.leadPipeline[0],
     };
 
     saveRecord(storageKeys.leads, payload);
+    sendWebsiteLead(payload);
     successCard.classList.remove("is-hidden");
     successCopy.textContent =
       `Thanks, ${payload.fullName}. We have your request and will follow up after reviewing the job details.`;
@@ -777,6 +835,7 @@ function initQuotePage() {
 
   contactLink.addEventListener("click", () => {
     localStorage.setItem(storageKeys.latestQuoteSummary, buildSummaryText());
+    contactLink.setAttribute("href", appendAttributionToUrl("contact.html?from=quote"));
   });
 
   resetButton.addEventListener("click", () => {
@@ -820,6 +879,7 @@ function initQuotePage() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  captureAttribution();
   initNav();
   initTestimonials();
   initCarousel();
