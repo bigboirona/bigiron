@@ -33,7 +33,7 @@ const storageKeys = {
   latestQuoteSummary: "bigiron_latest_quote_summary",
 };
 
-const quoteCatalog = {
+let quoteCatalog = {
   categories: [
     "General",
     "Exterior",
@@ -45,6 +45,8 @@ const quoteCatalog = {
   ],
   services: [
     { id: "general_not_sure", category: "General", subcategory: "General / Not Sure", name: "General Handyman / Not Sure Yet", unit: "job", low: 250, high: 900, min: 250, included: 1, assumptions: "Use this when the project is mixed or unclear. Photos and a short list will narrow the range." },
+    { id: "other_custom_scope", category: "General", subcategory: "Other / Custom", name: "Other / Custom Scope", unit: "job", low: 250, high: 1200, min: 250, included: 1, photos: true, assumptions: "Use this for oddball one-off work that does not fit the list, like satellite dish removal, small demo, removal, mounting, repair, or cleanup. Photos and notes are required to tighten the range." },
+    { id: "demo_removal", category: "General", subcategory: "Other / Custom", name: "Small Demo / Removal", unit: "job", low: 300, high: 1200, min: 300, included: 1, photos: true, assumptions: "Use this for small removal or demo work like satellite dish removal, old fixture removal, small tear-out, haul-off prep, or cleanup. Dump fees and roof/ladder access can change the range." },
     { id: "general_punch_list", category: "General", subcategory: "Punch List", name: "General Punch List", unit: "job", low: 250, high: 600, min: 250, included: 1, assumptions: "Assumes 2-4 small items, basic tools, normal access, and no heavy material handling." },
     { id: "hourly_handyman", category: "General", subcategory: "Punch List", name: "Hourly Handyman Work", unit: "hour", low: 250, high: 300, unitLow: 100, unitHigh: 150, min: 250, included: 2, assumptions: "Good for open-ended punch-list work. $250 minimum visit, roughly covering the first two hours, then about $100-$150/hr depending on scope." },
     { id: "half_day", category: "General", subcategory: "Punch List", name: "Half-Day Handyman Block", unit: "job", low: 575, high: 750, min: 575, included: 1, assumptions: "Four hours on site. Materials are separate unless listed." },
@@ -138,6 +140,32 @@ function quoteUnitHint(unit) {
     hour: "Use the expected labor block.",
   };
   return hints[unit] || "";
+}
+
+async function loadQuoteCatalog() {
+  if (document.body?.dataset.page !== "quote") return;
+  const urls = [
+    window.BIG_IRON_QUOTE_API_URL,
+    document.body?.dataset.quoteApiUrl,
+    "/api/quote-catalog",
+  ].filter(Boolean);
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) continue;
+      const catalog = await response.json();
+      if (
+        Array.isArray(catalog.categories)
+        && Array.isArray(catalog.services)
+        && Array.isArray(catalog.modifiers)
+      ) {
+        quoteCatalog = catalog;
+        return;
+      }
+    } catch {
+      // Try the next configured live source.
+    }
+  }
 }
 
 function getQueryServiceId() {
@@ -790,11 +818,12 @@ function initQuotePage() {
   renderPreview();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initNav();
   initTestimonials();
   initCarousel();
   initBookingPage();
   initContactPage();
+  await loadQuoteCatalog();
   initQuotePage();
 });
