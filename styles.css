@@ -1123,6 +1123,14 @@ select:focus {
   gap: 14px;
 }
 
+.quote-unit-help {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.25;
+}
+
 .quote-fieldset {
   display: grid;
   gap: 12px;

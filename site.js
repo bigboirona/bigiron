@@ -66,7 +66,8 @@ let quoteCatalog = {
     { id: "decking_replace_sf", category: "Decks & Fences", subcategory: "Decks", name: "Decking Replacement", unit: "sf", low: 0, high: 0, unitLow: 22, unitHigh: 48, min: 650, included: 40, photos: true, siteVisit: true, assumptions: "Square-foot deck surface replacement. Framing rot, stairs, railings, and premium decking are separate." },
     { id: "deck_stair_railing", category: "Decks & Fences", subcategory: "Decks", name: "Deck Stair / Railing Repair", unit: "job", low: 450, high: 1800, min: 450, included: 1, photos: true, siteVisit: true, assumptions: "Small stair, railing, or guard repair. Structural rebuilds need site review." },
     { id: "deck_framing_repair", category: "Decks & Fences", subcategory: "Decks", name: "Deck Framing / Joist Repair", unit: "job", low: 850, high: 3500, min: 850, included: 1, photos: true, siteVisit: true, assumptions: "Structural deck framing repair. Rot extent, access, and code requirements drive the final range." },
-    { id: "fence_repair", category: "Decks & Fences", subcategory: "Fences & Gates", name: "Fence / Gate Repair", unit: "job", low: 350, high: 1200, min: 350, included: 1, photos: true, assumptions: "Leaning sections, gate adjustment, loose boards, or localized repair. New fence runs price by scope." },
+    { id: "fence_repair", category: "Decks & Fences", subcategory: "Fences & Gates", name: "Fence / Gate Repair", unit: "job", low: 350, high: 1200, min: 350, included: 1, photos: true, assumptions: "Leaning sections, gate adjustment, loose boards, or localized repair. Use the linear-foot repair item when the damaged run length is known." },
+    { id: "fence_repair_lf", category: "Decks & Fences", subcategory: "Fences & Gates", name: "Fence Repair / Section Rebuild", unit: "lf", low: 0, high: 0, unitLow: 30, unitHigh: 70, min: 650, included: 20, photos: true, siteVisit: true, assumptions: "Linear-foot fence repair for a known damaged run. Assumes existing posts are mostly serviceable and the work is localized to boards/rails/resetting. Failed posts, demo haul-away, slope, staining/paint, or a full new fence install can change the range." },
     { id: "fence_post_replace", category: "Decks & Fences", subcategory: "Fences & Gates", name: "Fence Post Replacement", unit: "item", low: 350, high: 650, unitLow: 225, unitHigh: 450, min: 350, included: 1, photos: true, assumptions: "Per post. Concrete removal, slope, and poor access can move the range." },
     { id: "roof_gutter_not_sure", category: "Roof & Gutters", subcategory: "General / Not Sure", name: "Roof / Gutter Work / Not Sure Yet", unit: "job", low: 350, high: 1800, min: 350, included: 1, photos: true, siteVisit: true, assumptions: "Use this for roofline, leak, drainage, or gutter issues when the exact material or repair is unknown." },
     { id: "gutter_cleaning", category: "Roof & Gutters", subcategory: "Gutters", name: "Gutter Cleaning", unit: "lf", low: 0, high: 0, unitLow: 4, unitHigh: 8, min: 300, included: 60, photos: true, assumptions: "Standard gutter cleaning with safe access. Guards, heavy debris, and steep roofs add cost." },
@@ -142,6 +143,24 @@ function quoteUnitHint(unit) {
     hour: "Use the expected labor block.",
   };
   return hints[unit] || "";
+}
+
+function quoteServiceRateHint(service) {
+  const unit = service?.unit;
+  const hint = quoteUnitHint(unit);
+  if (["lf", "sf", "hour", "item"].includes(unit) && (service.unitLow || service.unitHigh)) {
+    const perUnitLabels = {
+      lf: "linear foot",
+      sf: "square foot",
+      hour: "hour",
+      item: "item",
+    };
+    const unitName = perUnitLabels[unit] || quoteUnitLabel(unit).toLowerCase();
+    const rate = quoteRange(service.unitLow || 0, service.unitHigh || 0);
+    const minimum = service.min ? ` ${currency(service.min)} minimum.` : "";
+    return `${hint} ${rate} per ${unitName}.${minimum}`.trim();
+  }
+  return hint;
 }
 
 async function loadQuoteCatalog() {
@@ -568,6 +587,7 @@ function initQuotePage() {
   const search = byId("quote-search");
   const quantityLabel = byId("quote-quantity-label");
   const quantity = byId("quote-quantity");
+  const quantityHelp = byId("quote-unit-help");
   const location = byId("quote-location");
   const scope = byId("quote-scope");
   const photos = byId("quote-photos");
@@ -703,9 +723,10 @@ function initQuotePage() {
 
   function syncQuantityLabel() {
     const label = quoteUnitLabel(selectedService.unit);
-    const hint = quoteUnitHint(selectedService.unit);
+    const hint = quoteServiceRateHint(selectedService);
     quantityLabel.childNodes[0].textContent = label;
     quantity.placeholder = hint;
+    if (quantityHelp) quantityHelp.textContent = hint;
   }
 
   function total(items) {
