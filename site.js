@@ -1,5 +1,6 @@
 const siteConfig = {
-  bookingRequestUrl: "#",
+  leadRequestUrl: "https://api.bigironconstruction.co/api/website-lead",
+  quoteCatalogUrl: "https://api.bigironconstruction.co/api/quote-catalog",
   leadPipeline: ["New Inquiry", "Contacted", "Booked", "Paid", "Completed", "Lost"],
   services: [
     {
@@ -27,8 +28,6 @@ const siteConfig = {
 };
 
 const storageKeys = {
-  bookings: "bigiron_bookings",
-  leads: "bigiron_leads",
   quotePreviews: "bigiron_quote_previews",
   latestQuoteSummary: "bigiron_latest_quote_summary",
   attribution: "bigiron_attribution",
@@ -168,6 +167,7 @@ async function loadQuoteCatalog() {
   const urls = [
     window.BIG_IRON_QUOTE_API_URL,
     document.body?.dataset.quoteApiUrl,
+    siteConfig.quoteCatalogUrl,
     "/api/quote-catalog",
   ].filter(Boolean);
   for (const url of urls) {
@@ -237,7 +237,11 @@ function appendAttributionToUrl(url) {
 }
 
 async function sendWebsiteLead(payload) {
-  const urls = [window.BIG_IRON_LEAD_API_URL, "/api/website-lead"].filter(Boolean);
+  const urls = [
+    window.BIG_IRON_LEAD_API_URL,
+    siteConfig.leadRequestUrl,
+    "/api/website-lead",
+  ].filter(Boolean);
   for (const url of urls) {
     try {
       const response = await fetch(url, {
@@ -251,6 +255,24 @@ async function sendWebsiteLead(payload) {
     }
   }
   return false;
+}
+
+function newSubmissionId(prefix) {
+  const randomPart = globalThis.crypto?.randomUUID
+    ? globalThis.crypto.randomUUID().replaceAll("-", "")
+    : `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+  return `${prefix}_${randomPart}`.slice(0, 80);
+}
+
+function showSubmissionStatus(card, copy, sent, successCopy) {
+  card.classList.remove("is-hidden");
+  const eyebrow = card.querySelector(".eyebrow");
+  const title = card.querySelector("h2");
+  if (eyebrow) eyebrow.textContent = sent ? "Request sent" : "Request not sent";
+  if (title) title.textContent = sent ? "We got it." : "Please call, text, or email.";
+  copy.textContent = sent
+    ? successCopy
+    : "The website could not deliver your request. Your form is still filled out; please try again or use the phone and email links on this page.";
 }
 
 function initNav() {
@@ -401,9 +423,12 @@ function initBookingPage() {
   const summarySlot = byId("summary-slot");
   const successCard = byId("booking-success");
   const successCopy = byId("booking-success-copy");
+  const submitButton = form.querySelector("button[type='submit']");
+  const attribution = currentAttribution();
 
   let selectedService = siteConfig.services[0];
   let selectedSlot = "";
+  let submissionId = newSubmissionId("booking");
 
   function renderSlots(service) {
     slotGrid.innerHTML = "";
@@ -461,7 +486,7 @@ function initBookingPage() {
     updateSummary();
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(form);
     const payload = {
@@ -469,20 +494,29 @@ function initBookingPage() {
       email: data.get("email"),
       phone: data.get("phone"),
       address: data.get("address"),
-      notes: data.get("notes"),
-      serviceId: selectedService.id,
-      serviceName: selectedService.name,
-      price: selectedService.price,
-      slot: selectedSlot,
-      targetUrl: siteConfig.bookingRequestUrl,
+      serviceType: selectedService.name,
+      timing: selectedSlot,
+      message: `Booking request for ${selectedService.name} (${currency(selectedService.price)}, ${selectedService.duration}). Access notes: ${data.get("notes") || "None provided"}`,
+      attribution,
+      leadSource: attribution.utm_source || "website",
+      submissionId,
+      website: data.get("website") || "",
     };
 
-    saveRecord(storageKeys.bookings, payload);
-    successCard.classList.remove("is-hidden");
-    successCopy.textContent =
-      `${payload.fullName}, your ${selectedService.name} request for ${selectedSlot} was saved locally in this preview site. The live version can later route this into Big Iron's real booking and confirmation flow.`;
-    form.reset();
-    renderServices();
+    submitButton.disabled = true;
+    const sent = await sendWebsiteLead(payload);
+    submitButton.disabled = false;
+    showSubmissionStatus(
+      successCard,
+      successCopy,
+      sent,
+      `${payload.fullName}, your ${selectedService.name} request for ${selectedSlot} was delivered to Big Iron for confirmation.`,
+    );
+    if (sent) {
+      submissionId = newSubmissionId("booking");
+      form.reset();
+      renderServices();
+    }
   });
 
   renderServices();
@@ -494,6 +528,7 @@ function initContactPage() {
 
   const successCard = byId("contact-success");
   const successCopy = byId("contact-success-copy");
+  const submitButton = form.querySelector("button[type='submit']");
   const params = new URLSearchParams(window.location.search);
   const attribution = currentAttribution();
   if (params.get("from") === "quote") {
@@ -508,7 +543,8 @@ function initContactPage() {
     }
   }
 
-  form.addEventListener("submit", (event) => {
+  let submissionId = newSubmissionId("contact");
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const data = new FormData(form);
     const payload = {
@@ -522,14 +558,23 @@ function initContactPage() {
       attribution,
       leadSource: attribution.utm_source || "website",
       pipelineStage: siteConfig.leadPipeline[0],
+      submissionId,
+      website: data.get("website") || "",
     };
 
-    saveRecord(storageKeys.leads, payload);
-    sendWebsiteLead(payload);
-    successCard.classList.remove("is-hidden");
-    successCopy.textContent =
-      `Thanks, ${payload.fullName}. We have your request and will follow up after reviewing the job details.`;
-    form.reset();
+    submitButton.disabled = true;
+    const sent = await sendWebsiteLead(payload);
+    submitButton.disabled = false;
+    showSubmissionStatus(
+      successCard,
+      successCopy,
+      sent,
+      `Thanks, ${payload.fullName}. Big Iron received your request and will follow up after reviewing the job details.`,
+    );
+    if (sent) {
+      submissionId = newSubmissionId("contact");
+      form.reset();
+    }
   });
 }
 
