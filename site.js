@@ -513,6 +513,10 @@ function initBookingPage() {
       `${payload.fullName}, your ${selectedService.name} request for ${selectedSlot} was delivered to Big Iron for confirmation.`,
     );
     if (sent) {
+      window.bigIronTrackEvent?.("generate_lead", {
+        form_type: "booking_request",
+        page_path: window.location.pathname,
+      });
       submissionId = newSubmissionId("booking");
       form.reset();
       renderServices();
@@ -572,6 +576,10 @@ function initContactPage() {
       `Thanks, ${payload.fullName}. Big Iron received your request and will follow up after reviewing the job details.`,
     );
     if (sent) {
+      window.bigIronTrackEvent?.("generate_lead", {
+        form_type: "contact_request",
+        page_path: window.location.pathname,
+      });
       submissionId = newSubmissionId("contact");
       form.reset();
     }
