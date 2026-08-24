@@ -1771,7 +1771,8 @@ select:focus {
 }
 
 @media print {
-  body[data-page="handyman-estimate-checklist"] {
+  body[data-page="handyman-estimate-checklist"],
+  body[data-page="contractor-resources"] {
     background: #fff;
   }
 
@@ -1780,17 +1781,27 @@ select:focus {
   body[data-page="handyman-estimate-checklist"] .share-tools,
   body[data-page="handyman-estimate-checklist"] .cta-band,
   body[data-page="handyman-estimate-checklist"] .site-footer,
-  body[data-page="handyman-estimate-checklist"] .fine-print {
+  body[data-page="handyman-estimate-checklist"] .fine-print,
+  body[data-page="contractor-resources"] .topbar,
+  body[data-page="contractor-resources"] .hero-actions,
+  body[data-page="contractor-resources"] .share-tools,
+  body[data-page="contractor-resources"] .cta-band,
+  body[data-page="contractor-resources"] .site-footer,
+  body[data-page="contractor-resources"] .fine-print {
     display: none !important;
   }
 
-  body[data-page="handyman-estimate-checklist"] .site-shell {
+  body[data-page="handyman-estimate-checklist"] .site-shell,
+  body[data-page="contractor-resources"] .site-shell {
     width: 100%;
   }
 
   body[data-page="handyman-estimate-checklist"] .page-hero,
   body[data-page="handyman-estimate-checklist"] .services-preview,
-  body[data-page="handyman-estimate-checklist"] .service-snippet {
+  body[data-page="handyman-estimate-checklist"] .service-snippet,
+  body[data-page="contractor-resources"] .page-hero,
+  body[data-page="contractor-resources"] .story-card,
+  body[data-page="contractor-resources"] .policy-band {
     break-inside: avoid;
     box-shadow: none;
   }

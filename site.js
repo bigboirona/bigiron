@@ -967,14 +967,15 @@ function initQuotePage() {
 function initPageShareTools() {
   const printButton = document.querySelector("[data-print-page]");
   const shareButton = document.querySelector("[data-share-page]");
+  const copyButton = document.querySelector("[data-copy-resource]");
   const status = document.querySelector("[data-share-status]");
 
   if (printButton) {
     printButton.addEventListener("click", () => window.print());
   }
-  if (!shareButton) return;
+  if (!shareButton && !copyButton) return;
 
-  const originalLabel = shareButton.textContent;
+  const originalLabel = shareButton?.textContent || copyButton?.textContent || "";
   const showStatus = (message) => {
     if (status) {
       status.textContent = message;
@@ -990,7 +991,25 @@ function initPageShareTools() {
     }, 1800);
   };
 
-  shareButton.addEventListener("click", async () => {
+  if (copyButton) {
+    copyButton.addEventListener("click", async () => {
+      const source = document.querySelector(copyButton.dataset.copyResource || "");
+      let value = source?.textContent || "";
+      try {
+        value = JSON.parse(value);
+      } catch {
+        value = value.trim();
+      }
+      try {
+        await navigator.clipboard.writeText(value);
+        showStatus("Checklist copied");
+      } catch {
+        window.prompt("Copy this checklist", value);
+      }
+    });
+  }
+
+  shareButton?.addEventListener("click", async () => {
     const payload = {
       title: shareButton.dataset.shareTitle || document.title,
       text: shareButton.dataset.shareText || "",
