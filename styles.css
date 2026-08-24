@@ -504,6 +504,20 @@ body[data-page="home"] .hero-copy > .hero-text {
   color: var(--accent-deep);
 }
 
+.fine-print {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.policy-band {
+  max-width: 880px;
+  margin-inline: auto;
+  padding: 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: rgba(247, 238, 226, 0.92);
+}
+
 .service-preview .section-head,
 .testimonial-strip .section-head {
   margin-bottom: 20px;
