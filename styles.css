@@ -1772,7 +1772,8 @@ select:focus {
 
 @media print {
   body[data-page="handyman-estimate-checklist"],
-  body[data-page="contractor-resources"] {
+  body[data-page="contractor-resources"],
+  body[data-page="ai-safety-for-homeowners"] {
     background: #fff;
   }
 
@@ -1787,12 +1788,20 @@ select:focus {
   body[data-page="contractor-resources"] .share-tools,
   body[data-page="contractor-resources"] .cta-band,
   body[data-page="contractor-resources"] .site-footer,
-  body[data-page="contractor-resources"] .fine-print {
+  body[data-page="contractor-resources"] .fine-print,
+  body[data-page="ai-safety-for-homeowners"] .topbar,
+  body[data-page="ai-safety-for-homeowners"] .hero-actions,
+  body[data-page="ai-safety-for-homeowners"] .share-tools,
+  body[data-page="ai-safety-for-homeowners"] .cta-band,
+  body[data-page="ai-safety-for-homeowners"] .site-footer,
+  body[data-page="ai-safety-for-homeowners"] .fine-print,
+  body[data-page="ai-safety-for-homeowners"] .everyday-ai-product-proof {
     display: none !important;
   }
 
   body[data-page="handyman-estimate-checklist"] .site-shell,
-  body[data-page="contractor-resources"] .site-shell {
+  body[data-page="contractor-resources"] .site-shell,
+  body[data-page="ai-safety-for-homeowners"] .site-shell {
     width: 100%;
   }
 
@@ -1801,7 +1810,10 @@ select:focus {
   body[data-page="handyman-estimate-checklist"] .service-snippet,
   body[data-page="contractor-resources"] .page-hero,
   body[data-page="contractor-resources"] .story-card,
-  body[data-page="contractor-resources"] .policy-band {
+  body[data-page="contractor-resources"] .policy-band,
+  body[data-page="ai-safety-for-homeowners"] .page-hero,
+  body[data-page="ai-safety-for-homeowners"] .story-card,
+  body[data-page="ai-safety-for-homeowners"] .policy-band {
     break-inside: avoid;
     box-shadow: none;
   }
