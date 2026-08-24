@@ -964,6 +964,53 @@ function initQuotePage() {
   renderPreview();
 }
 
+function initPageShareTools() {
+  const printButton = document.querySelector("[data-print-page]");
+  const shareButton = document.querySelector("[data-share-page]");
+  const status = document.querySelector("[data-share-status]");
+
+  if (printButton) {
+    printButton.addEventListener("click", () => window.print());
+  }
+  if (!shareButton) return;
+
+  const originalLabel = shareButton.textContent;
+  const showStatus = (message) => {
+    if (status) {
+      status.textContent = message;
+    } else {
+      shareButton.textContent = message || originalLabel;
+    }
+    window.setTimeout(() => {
+      if (status) {
+        status.textContent = "";
+      } else {
+        shareButton.textContent = originalLabel;
+      }
+    }, 1800);
+  };
+
+  shareButton.addEventListener("click", async () => {
+    const payload = {
+      title: shareButton.dataset.shareTitle || document.title,
+      text: shareButton.dataset.shareText || "",
+      url: shareButton.dataset.shareUrl || window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(payload);
+        showStatus("Shared");
+        return;
+      }
+      await navigator.clipboard.writeText(payload.url);
+      showStatus("Link copied");
+    } catch (error) {
+      if (error?.name === "AbortError") return;
+      window.prompt("Copy this checklist link", payload.url);
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   captureAttribution();
   initNav();
@@ -974,4 +1021,5 @@ document.addEventListener("DOMContentLoaded", async () => {
   initContactPage();
   await loadQuoteCatalog();
   initQuotePage();
+  initPageShareTools();
 });
