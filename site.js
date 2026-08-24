@@ -286,6 +286,18 @@ function initNav() {
   });
 }
 
+function initDatedOffers() {
+  const current = Date.now();
+  document.querySelectorAll("[data-dated-before][data-expire-at]").forEach((element) => {
+    const expires = Date.parse(element.dataset.expireAt || "");
+    if (Number.isFinite(expires)) element.hidden = current >= expires;
+  });
+  document.querySelectorAll("[data-dated-after][data-expire-at]").forEach((element) => {
+    const expires = Date.parse(element.dataset.expireAt || "");
+    if (Number.isFinite(expires)) element.hidden = current < expires;
+  });
+}
+
 function initTestimonials() {
   const rail = byId("testimonial-rail");
   if (!rail) return;
@@ -955,6 +967,7 @@ function initQuotePage() {
 document.addEventListener("DOMContentLoaded", async () => {
   captureAttribution();
   initNav();
+  initDatedOffers();
   initTestimonials();
   initCarousel();
   initBookingPage();

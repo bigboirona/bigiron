@@ -16,6 +16,10 @@
   --max: 1200px;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 * {
   box-sizing: border-box;
 }
