@@ -964,6 +964,10 @@ body[data-page="home"] .hero-copy > .hero-text {
   line-height: 1.35;
 }
 
+.resource-product-proof {
+  margin-top: 18px;
+}
+
 .page-hero {
   max-width: 880px;
   padding-top: 32px;
