@@ -907,6 +907,63 @@ body[data-page="home"] .hero-copy > .hero-text {
   color: rgba(255, 218, 187, 0.86);
 }
 
+.product-proof-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 28px;
+  align-items: center;
+  padding: 30px;
+  border: 1px solid rgba(95, 111, 84, 0.2);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(135deg, rgba(247, 238, 226, 0.98), rgba(231, 234, 222, 0.96));
+  box-shadow: var(--shadow);
+}
+
+.product-proof-copy h2 {
+  max-width: 680px;
+}
+
+.product-proof-list {
+  display: grid;
+  gap: 9px;
+  margin: 18px 0 22px;
+  padding-left: 22px;
+  color: var(--ink);
+}
+
+.product-proof-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.product-proof-gallery figure {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid rgba(95, 111, 84, 0.2);
+  border-radius: 16px;
+  background: rgba(255, 252, 246, 0.92);
+  box-shadow: 0 12px 28px rgba(47, 30, 18, 0.1);
+}
+
+.product-proof-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #f2eee4;
+}
+
+.product-proof-gallery figcaption {
+  padding: 10px 12px 12px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
 .page-hero {
   max-width: 880px;
   padding-top: 32px;
@@ -1489,7 +1546,8 @@ select:focus {
   .booking-layout,
   .contact-layout,
   .service-detail-card,
-  .cta-band {
+  .cta-band,
+  .product-proof-panel {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
@@ -1662,5 +1720,13 @@ select:focus {
 
   .proof-tile-wide {
     grid-column: auto;
+  }
+
+  .product-proof-panel {
+    padding: 22px 18px;
+  }
+
+  .product-proof-gallery {
+    grid-template-columns: 1fr;
   }
 }
