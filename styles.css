@@ -968,6 +968,10 @@ body[data-page="home"] .hero-copy > .hero-text {
   margin-top: 18px;
 }
 
+.everyday-ai-product-proof .product-proof-gallery {
+  margin: 22px 0 16px;
+}
+
 .page-hero {
   max-width: 880px;
   padding-top: 32px;
