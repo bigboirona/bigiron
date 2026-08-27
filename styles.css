@@ -616,6 +616,54 @@ body[data-page="home"] .hero-copy > .hero-text {
   grid-column: span 2;
 }
 
+.portfolio-reel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.62fr);
+  gap: clamp(24px, 5vw, 64px);
+  align-items: center;
+  margin-bottom: 42px;
+  padding: clamp(24px, 5vw, 52px);
+  border: 1px solid rgba(255, 246, 235, 0.86);
+  border-radius: var(--radius-xl);
+  background: linear-gradient(145deg, rgba(56, 67, 50, 0.98), rgba(36, 31, 24, 0.98));
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.portfolio-reel-copy h2 {
+  margin: 8px 0 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(2rem, 4.5vw, 4.25rem);
+  line-height: 0.98;
+}
+
+.portfolio-reel-copy p:not(.eyebrow) {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.portfolio-reel-media {
+  margin: 0;
+}
+
+.portfolio-reel-media video {
+  display: block;
+  width: min(100%, 360px);
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 18px;
+  background: #171a15;
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.34);
+}
+
+.portfolio-reel-media figcaption {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
 .work-carousel-top {
   margin-top: 14px;
 }
@@ -1590,6 +1638,10 @@ select:focus {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .portfolio-reel {
+    grid-template-columns: 1fr;
   }
 
   body[data-page="home"] .hero {
