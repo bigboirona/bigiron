@@ -245,11 +245,11 @@ function appendAttributionToUrl(url) {
 }
 
 async function sendWebsiteLead(payload) {
-  const urls = [
+  const urls = [...new Set([
     window.BIG_IRON_LEAD_API_URL,
     siteConfig.leadRequestUrl,
     "/api/website-lead",
-  ].filter(Boolean);
+  ].filter(Boolean))];
   for (const url of urls) {
     try {
       const response = await fetch(url, {
@@ -257,12 +257,18 @@ async function sendWebsiteLead(payload) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (response.ok) return true;
+      if (!response.ok) continue;
+      const receipt = await response.json();
+      if (receipt?.ok === true
+          && receipt.intake_row_id === `web-${payload.submissionId}`
+          && typeof receipt.duplicate === "boolean") {
+        return receipt;
+      }
     } catch {
-      // Keep the local copy if the live API is not connected yet.
+      // The filled form and submission ID remain available for a safe retry.
     }
   }
-  return false;
+  return null;
 }
 
 function newSubmissionId(prefix) {
@@ -508,6 +514,7 @@ function initBookingPage() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (submitButton.disabled) return;
     const data = new FormData(form);
     const payload = {
       fullName: data.get("fullName"),
@@ -524,7 +531,8 @@ function initBookingPage() {
     };
 
     submitButton.disabled = true;
-    const sent = await sendWebsiteLead(payload);
+    const receipt = await sendWebsiteLead(payload);
+    const sent = Boolean(receipt);
     submitButton.disabled = false;
     showSubmissionStatus(
       successCard,
@@ -533,10 +541,7 @@ function initBookingPage() {
       `${payload.fullName}, your ${selectedService.name} request for ${selectedSlot} was delivered to Big Iron for confirmation.`,
     );
     if (sent) {
-      window.bigIronTrackEvent?.("generate_lead", {
-        form_type: "booking_request",
-        page_path: window.location.pathname,
-      });
+      window.bigIronTrackLead?.(receipt, "booking_request");
       submissionId = newSubmissionId("booking");
       form.reset();
       renderServices();
@@ -584,6 +589,7 @@ function initContactPage() {
   let submissionId = newSubmissionId("contact");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (submitButton.disabled) return;
     const data = new FormData(form);
     const payload = {
       fullName: data.get("fullName"),
@@ -601,7 +607,8 @@ function initContactPage() {
     };
 
     submitButton.disabled = true;
-    const sent = await sendWebsiteLead(payload);
+    const receipt = await sendWebsiteLead(payload);
+    const sent = Boolean(receipt);
     submitButton.disabled = false;
     showSubmissionStatus(
       successCard,
@@ -610,10 +617,7 @@ function initContactPage() {
       `Thanks, ${payload.fullName}. Big Iron received your request and will follow up after reviewing the job details.`,
     );
     if (sent) {
-      window.bigIronTrackEvent?.("generate_lead", {
-        form_type: "contact_request",
-        page_path: window.location.pathname,
-      });
+      window.bigIronTrackLead?.(receipt, "contact_request");
       submissionId = newSubmissionId("contact");
       form.reset();
     }
