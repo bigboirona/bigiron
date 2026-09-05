@@ -200,6 +200,8 @@ function saveRecord(key, payload) {
   localStorage.setItem(key, JSON.stringify(current));
 }
 
+let pageAttribution = {};
+
 function captureAttribution() {
   const params = new URLSearchParams(window.location.search);
   const fields = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "gclid", "fbclid"];
@@ -211,11 +213,17 @@ function captureAttribution() {
   if (Object.keys(attribution).length) {
     attribution.landingPage = window.location.pathname;
     attribution.capturedAt = new Date().toISOString();
-    localStorage.setItem(storageKeys.attribution, JSON.stringify(attribution));
+    pageAttribution = attribution;
+    try {
+      localStorage.setItem(storageKeys.attribution, JSON.stringify(attribution));
+    } catch {
+      // The contact form must still work when browser storage is unavailable.
+    }
   }
 }
 
 function currentAttribution() {
+  if (Object.keys(pageAttribution).length) return pageAttribution;
   try {
     return JSON.parse(localStorage.getItem(storageKeys.attribution) || "{}");
   } catch {
@@ -547,6 +555,20 @@ function initContactPage() {
   const submitButton = form.querySelector("button[type='submit']");
   const params = new URLSearchParams(window.location.search);
   const attribution = currentAttribution();
+  if (params.get("service") === "holiday-lights") {
+    const serviceType = form.querySelector("select[name='serviceType']");
+    const message = form.querySelector("textarea[name='message']");
+    if (serviceType && !serviceType.value) serviceType.value = "Holiday lights / annual service";
+    if (message && !message.value.trim()) {
+      const lines = ["I'd like a quote for an annual holiday-light service with setup and takedown."];
+      for (const [key, label] of [["season", "Holidays"], ["look", "Look"], ["lights", "Lights"], ["storage", "Storage"]]) {
+        const value = (params.get(key) || "").replace(/[\x00-\x1f]/g, " ").trim().slice(0, 120);
+        if (value) lines.push(`${label}: ${value}`);
+      }
+      lines.push("Property/display size and access notes: ");
+      message.value = lines.join("\n");
+    }
+  }
   if (params.get("from") === "quote") {
     const quoteSummary = localStorage.getItem(storageKeys.latestQuoteSummary);
     const message = form.querySelector("textarea[name='message']");
