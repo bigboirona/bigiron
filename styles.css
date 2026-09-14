@@ -238,7 +238,7 @@ body[data-page="home"] .hero-copy > .hero-text {
   min-height: 500px;
   display: block;
   object-fit: cover;
-  object-position: 38% center;
+  object-position: 58% 43%;
 }
 
 .hero-photo figcaption {
@@ -1747,7 +1747,7 @@ select:focus {
   }
 
   .hero-photo img {
-    object-position: 38% 40%;
+    object-position: 58% 40%;
   }
 
   .hero h1,
