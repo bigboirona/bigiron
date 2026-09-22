@@ -43,6 +43,12 @@ a {
   text-decoration: none;
 }
 
+a.public-review-link {
+  color: #1455aa;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 button,
 input,
 textarea,
