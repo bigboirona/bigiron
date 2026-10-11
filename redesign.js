@@ -1,6 +1,7 @@
 /* Editorial gallery controls. No customer data or analytics are collected here. */
 (() => {
   "use strict";
+  document.documentElement.classList.add("js");
   function initialize() {
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.querySelector(".site-nav");
