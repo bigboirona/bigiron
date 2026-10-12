@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="assets/big-iron-logo.png" />
   <script defer src="analytics.js?v=lead-receipt-20260904"></script>
-  <title>Rough Quote Tool | Big Iron Construction</title>
+  <title>Project price planner | Big Iron Construction</title>
   <meta
     name="description"
     content="Build a preliminary Big Iron Construction price range for exterior repair, deck, fence, gutter, carpentry, and commercial or residential project work."
@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css?v=quote-fence-posts-1" />
-<link rel="stylesheet" href="redesign.css?v=footer-cities-20261011" />
+<link rel="stylesheet" href="redesign.css?v=experience-20261011" />
 <link rel="canonical" href="https://bigironconstruction.co/quote.html" />
 </head>
 <body data-page="quote">
@@ -47,7 +47,7 @@
         <div class="quote-builder-panel">
           <div class="quote-step-head">
             <p class="eyebrow">Scope</p>
-            <h2>What are we pricing?</h2>
+            <h2>What needs doing?</h2>
           </div>
 
           <label>
@@ -75,8 +75,8 @@
           </div>
 
           <label>
-            Scope notes
-            <textarea id="quote-scope" rows="4" placeholder="Short version: what is broken, approximate size, photos available, access issues..."></textarea>
+            Project details
+            <textarea id="quote-scope" rows="4" placeholder="What needs fixing? Include approximate size and anything we should know about access."></textarea>
           </label>
 
           <fieldset class="quote-fieldset">
@@ -93,36 +93,37 @@
           </fieldset>
 
           <div class="form-actions quote-actions">
-            <button class="button button-secondary" type="button" id="quote-reset">Reset</button>
+            <button class="button button-secondary" type="button" id="quote-reset">Clear project details</button>
           </div>
 
           <button class="button button-primary quote-add-inline" type="button" id="quote-add-service-top">
-            Add This Item To The Project
+            Add to my project
           </button>
         </div>
 
-        <aside class="quote-result-panel" aria-live="polite">
+        <aside class="quote-result-panel" aria-label="Your planning range">
           <div class="quote-total-band">
-            <span>Rough range</span>
+            <span>Your planning range</span>
             <strong id="quote-total-range">$0</strong>
             <p id="quote-result-copy">Choose a service to see a working price range.</p>
           </div>
 
+          <p id="quote-feedback" role="status" aria-live="polite"></p>
           <div class="quote-selected-list" id="quote-selected-list"></div>
 
           <div class="quote-output-block">
-            <p class="mini-label">Flags</p>
+            <p class="mini-label">Access &amp; conditions</p>
             <ul class="quote-flag-list" id="quote-flags"></ul>
           </div>
 
           <div class="quote-output-block">
-            <p class="mini-label">Assumptions</p>
+            <p class="mini-label">What this range assumes</p>
             <p id="quote-assumptions">Ranges assume normal access, sound substrate, and standard materials unless you add an access or difficulty flag.</p>
           </div>
 
           <div class="quote-next-actions">
-            <a class="button button-primary button-block" id="quote-contact-link" href="contact.html?from=quote">Send This To Big Iron</a>
-            <button class="button button-secondary button-block" type="button" id="quote-copy">Copy Range Summary</button>
+            <a class="button button-primary button-block" id="quote-contact-link" href="contact.html?from=quote">Review my request</a>
+            <button class="button button-secondary button-block" type="button" id="quote-copy">Copy range summary</button>
           </div>
         </aside>
       </section>
@@ -139,7 +140,7 @@
     </footer>
   </div>
 
-  <script src="site.js?v=lead-receipt-20260904"></script>
-  <script defer src="redesign.js?v=residential-20261011"></script>
+  <script src="site.js?v=experience-20261011"></script>
+  <script defer src="redesign.js?v=experience-20261011"></script>
 </body>
 </html>

@@ -140,3 +140,26 @@ p {line-height:1.7}.eyebrow,.panel-kicker,.path-label,.service-tag,.mini-label{c
  .home-hero h1{font-size:clamp(2.35rem,10.8vw,3.1rem)}
  .home-hero-intro{order:2}.home-hero-media{order:3}
 }
+
+/* Complete experience craft: natural reading, confident actions, precise feedback. */
+:is(button,.button,.text-link,.gallery-filter,.site-nav a,summary) { touch-action:manipulation; }
+:is(button,.button,.gallery-filter,.site-nav a,summary) { transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease,transform 120ms ease; }
+:is(button,.button,.gallery-filter):active:not(:disabled) { transform:translateY(1px); }
+:is(.gallery-filter,.quote-category-tab,.quote-subcategory-tab,.quote-service-option,.slot-button,.text-action,.nav-toggle) { min-height:44px; }
+button:disabled { cursor:wait;opacity:.6; }
+button[aria-busy="true"] { opacity:.85; }
+.site-nav a { min-height:44px;display:inline-flex;align-items:center; }
+:is(.eyebrow,.panel-kicker,.path-label,.service-tag,.mini-label) { font-size:12px; }
+:is(.quote-unit-help,.form-help,.quote-service-option span,.quote-service-option em,.quote-empty) { font-size:13px;line-height:1.65; }
+.quote-builder-panel :is(input,select,textarea) { font-size:16px; }
+.quote-add-inline { width:100%;min-height:52px;font-size:15px; }
+#quote-feedback { padding:12px 15px;border-left:3px solid var(--accent);background:var(--bg-soft);font-size:14px;line-height:1.6; }
+#quote-feedback:empty { display:none; }
+.quote-category-tab[aria-pressed="true"],.quote-subcategory-tab[aria-pressed="true"] { box-shadow:inset 0 -3px 0 currentColor; }
+.quote-service-option[aria-pressed="true"] { border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent); }
+:is(.footer-bottom,.footer-links,.footer-contact>a,.hero-footnote,.archive-summary-note,.analytics-consent p) { font-size:13px;line-height:1.7; }
+.footer-links a,.footer-contact>a,.footer-bottom a { min-height:44px;display:inline-flex;align-items:center; }
+@media(max-width:560px) { .home-hero-heading .eyebrow { font-size:12px; } .quote-actions button { min-height:44px; } .footer-contact>a { overflow-wrap:anywhere; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important;transition:none!important;animation:none!important; } }
+
+.quote-next-actions a[aria-disabled="true"] { opacity:.5;cursor:not-allowed; }

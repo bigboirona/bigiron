@@ -5,6 +5,10 @@
   function initialize() {
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.querySelector(".site-nav");
+    const route = path => path.replace(/\/index\.html$/, "/");
+    nav?.querySelectorAll("a[href]").forEach(link => {
+      if (route(new URL(link.href).pathname) === route(location.pathname)) link.setAttribute("aria-current", "page");
+    });
     const closeNav = () => {
       nav?.classList.remove("is-open");
       toggle?.setAttribute("aria-expanded", "false");
@@ -19,6 +23,7 @@
     document.addEventListener("click", event => {
       if (!event.target.closest(".topbar")) closeNav();
     });
+    window.matchMedia("(max-width: 820px)").addEventListener("change", closeNav);
 
     // Receipt feedback stays next to the action and is reachable by keyboard.
     if (typeof MutationObserver === "function") {

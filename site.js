@@ -530,15 +530,24 @@ function initBookingPage() {
       website: data.get("website") || "",
     };
 
-    submitButton.disabled = true;
-    const receipt = await sendWebsiteLead(payload);
+    const submitLabel = submitButton.textContent;
+    const controlState = [...form.querySelectorAll("input,textarea,select,button")].map(control => [control, control.disabled]);
+    controlState.forEach(([control]) => { control.disabled = true; });
+    submitButton.textContent = "Sending request…";
+    submitButton.setAttribute("aria-busy", "true");
+    let receipt;
+    try { receipt = await sendWebsiteLead(payload); }
+    finally {
+      controlState.forEach(([control, disabled]) => { control.disabled = disabled; });
+      submitButton.textContent = submitLabel;
+      submitButton.removeAttribute("aria-busy");
+    }
     const sent = Boolean(receipt);
-    submitButton.disabled = false;
     showSubmissionStatus(
       successCard,
       successCopy,
       sent,
-      `${payload.fullName}, your ${selectedService.name} request for ${selectedSlot} was delivered to Big Iron for confirmation.`,
+      `${payload.fullName}, your ${payload.serviceType} request for ${payload.timing} was delivered to Big Iron for confirmation.`,
     );
     if (sent) {
       window.bigIronTrackLead?.(receipt, "booking_request");
@@ -606,10 +615,19 @@ function initContactPage() {
       website: data.get("website") || "",
     };
 
-    submitButton.disabled = true;
-    const receipt = await sendWebsiteLead(payload);
+    const submitLabel = submitButton.textContent;
+    const controlState = [...form.querySelectorAll("input,textarea,select,button")].map(control => [control, control.disabled]);
+    controlState.forEach(([control]) => { control.disabled = true; });
+    submitButton.textContent = "Sending request…";
+    submitButton.setAttribute("aria-busy", "true");
+    let receipt;
+    try { receipt = await sendWebsiteLead(payload); }
+    finally {
+      controlState.forEach(([control, disabled]) => { control.disabled = disabled; });
+      submitButton.textContent = submitLabel;
+      submitButton.removeAttribute("aria-busy");
+    }
     const sent = Boolean(receipt);
-    submitButton.disabled = false;
     showSubmissionStatus(
       successCard,
       successCopy,
@@ -739,6 +757,7 @@ function initQuotePage() {
       button.type = "button";
       button.className = `quote-category-tab ${category === activeCategory ? "is-selected" : ""}`;
       button.textContent = category;
+      button.setAttribute("aria-pressed", String(category === activeCategory));
       button.addEventListener("click", () => {
         activeCategory = category;
         activeSubcategory = "All";
@@ -748,6 +767,7 @@ function initQuotePage() {
         renderSubcategories();
         renderServices();
         renderPreview();
+        categoryTabs.querySelector("[aria-pressed=true]")?.focus({ preventScroll: true });
       });
       categoryTabs.appendChild(button);
     });
@@ -760,12 +780,14 @@ function initQuotePage() {
       button.type = "button";
       button.className = `quote-subcategory-tab ${subcategory === activeSubcategory ? "is-selected" : ""}`;
       button.textContent = subcategory === "All" ? "Show all" : subcategory;
+      button.setAttribute("aria-pressed", String(subcategory === activeSubcategory));
       button.addEventListener("click", () => {
         activeSubcategory = subcategory;
         selectedService = quoteCatalog.services.find((service) => serviceMatches(service, search.value.trim())) || preferredServiceForCategory(activeCategory);
         renderSubcategories();
         renderServices();
         renderPreview();
+        subcategoryTabs.querySelector("[aria-pressed=true]")?.focus({ preventScroll: true });
       });
       subcategoryTabs.appendChild(button);
     });
@@ -774,21 +796,35 @@ function initQuotePage() {
   function renderServices() {
     const query = search.value.trim();
     const services = quoteCatalog.services.filter((service) => serviceMatches(service, query));
+    if (query) {
+      const term = query.toLowerCase();
+      const rank = service => service.name.toLowerCase().includes(term) ? 0 : service.category.toLowerCase().includes(term) ? 1 : (service.subcategory || "").toLowerCase().includes(term) ? 2 : 3;
+      services.sort((left, right) => rank(left) - rank(right));
+    }
+    if (services.length && !services.some(service => service.id === selectedService.id)) selectedService = services[0];
     serviceList.innerHTML = "";
+    addTopButton.disabled = services.length === 0;
+    if (!services.length) {
+      const empty = document.createElement("p");
+      empty.className = "quote-empty";
+      empty.textContent = "No services match that search. Try another word or choose a different category.";
+      serviceList.append(empty);
+    }
     services.forEach((service) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = `quote-service-option ${service.id === selectedService.id ? "is-selected" : ""}`;
+      button.setAttribute("aria-pressed", String(service.id === selectedService.id));
       button.innerHTML = `
         <strong>${service.name}</strong>
         <span>${service.subcategory || service.category} / ${quoteUnitLabel(service.unit)}</span>
-        <em>${service.id === selectedService.id ? "Selected - adjust quantity, then add it" : "Tap to select"}</em>
+        <em>${service.id === selectedService.id ? "Selected · set the quantity, then add to your project" : "Tap to select"}</em>
       `;
       button.addEventListener("click", () => {
         selectedService = service;
         renderServices();
         renderPreview();
-        quantity.focus({ preventScroll: true });
+        serviceList.querySelector("[aria-pressed=true]")?.focus({ preventScroll: true });
       });
       serviceList.appendChild(button);
     });
@@ -827,11 +863,11 @@ function initQuotePage() {
     );
   }
 
-  function renderFlags(flags) {
+  function renderFlags(flags, hasContext = true) {
     flagList.innerHTML = "";
     if (!flags.length) {
       const item = document.createElement("li");
-      item.textContent = "No major flags selected yet.";
+      item.textContent = hasContext ? "Standard access selected." : "Choose a service to review its conditions.";
       flagList.appendChild(item);
       return;
     }
@@ -847,7 +883,7 @@ function initQuotePage() {
     if (!quoteItems.length) {
       const empty = document.createElement("p");
       empty.className = "quote-empty";
-      empty.textContent = "Add one or more scopes to build the total range.";
+      empty.textContent = "Your project starts with one item. Choose a service and add it above.";
       selectedList.appendChild(empty);
       return;
     }
@@ -866,8 +902,12 @@ function initQuotePage() {
         </div>
       `;
       row.querySelector("button").addEventListener("click", () => {
-        quoteItems.splice(index, 1);
+        const removed = quoteItems.splice(index, 1)[0];
+        const feedback = byId("quote-feedback");
+        if (feedback) feedback.textContent = `${removed.name} removed from your planning range.`;
+        renderSelectedItems();
         renderPreview();
+        (selectedList.querySelector("button") || addTopButton).focus({ preventScroll: true });
       });
       selectedList.appendChild(row);
     });
@@ -876,16 +916,19 @@ function initQuotePage() {
   function renderPreview() {
     const preview = currentPreview();
     const combined = quoteItems.length ? total(quoteItems) : preview;
-    const allFlags = quoteItems.length ? quoteItems.flatMap((item) => item.flags) : preview.flags;
-
     syncQuantityLabel();
-    totalRange.textContent = quoteRange(combined.low, combined.high);
+    const hasSelection = Boolean(serviceList.querySelector('[aria-pressed="true"]'));
+    const allFlags = quoteItems.length ? quoteItems.flatMap((item) => item.flags) : hasSelection ? preview.flags : [];
+    copyButton.disabled = !quoteItems.length && !hasSelection;
+    contactLink.setAttribute("aria-disabled", String(copyButton.disabled));
+    totalRange.textContent = quoteItems.length || hasSelection ? quoteRange(combined.low, combined.high) : "—";
     resultCopy.textContent = quoteItems.length
-      ? `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"} in this project. Current selection: ${selectedService.name} ${quoteRange(preview.low, preview.high)}.`
-      : `${selectedService.name}: ${quoteRange(preview.low, preview.high)} before formal review.`;
-    assumptions.textContent = selectedService.assumptions;
-    renderSelectedItems();
-    renderFlags(allFlags);
+      ? `${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"} in this project.${hasSelection ? ` Current selection: ${selectedService.name} ${quoteRange(preview.low, preview.high)}.` : ' Try another search to add more.'}`
+      : hasSelection ? `${selectedService.name}: ${quoteRange(preview.low, preview.high)} before formal review.` : "Choose a matching service to build your planning range.";
+    assumptions.textContent = quoteItems.length
+      ? [...new Set(quoteItems.map(item => item.assumptions).filter(Boolean))].join(" ")
+      : hasSelection ? selectedService.assumptions : "Choose a matching service to see what the range assumes.";
+    renderFlags(allFlags, Boolean(quoteItems.length || hasSelection));
   }
 
   function buildSummaryText() {
@@ -916,6 +959,7 @@ function initQuotePage() {
   }
 
   function addCurrentProject() {
+    if (addTopButton.disabled) return;
     const modifiers = selectedModifiers();
     const preview = currentPreview();
     quoteItems.push({
@@ -930,6 +974,8 @@ function initQuotePage() {
       flags: preview.flags,
       assumptions: selectedService.assumptions,
     });
+    const feedback = byId("quote-feedback");
+    if (feedback) feedback.textContent = `${selectedService.name} added · ${quoteItems.length} item${quoteItems.length === 1 ? "" : "s"} in your project.`;
     saveRecord(storageKeys.quotePreviews, {
       items: quoteItems,
       scope: scope.value.trim(),
@@ -940,17 +986,22 @@ function initQuotePage() {
     modifierGrid.querySelectorAll("input").forEach((input) => {
       input.checked = false;
     });
+    renderSelectedItems();
     renderPreview();
   }
 
   addTopButton.addEventListener("click", addCurrentProject);
 
-  contactLink.addEventListener("click", () => {
+  contactLink.addEventListener("click", event => {
+    if (contactLink.getAttribute("aria-disabled") === "true") { event.preventDefault(); return; }
     localStorage.setItem(storageKeys.latestQuoteSummary, buildSummaryText());
     contactLink.setAttribute("href", appendAttributionToUrl("contact.html?from=quote"));
   });
 
   resetButton.addEventListener("click", () => {
+    if ((quoteItems.length || scope.value.trim() || location.value.trim() || quantity.value !== "1" || photos.checked || selectedModifiers().length) && !window.confirm("Clear your added items, quantities and project details? Your current service selection will stay.")) return;
+    const feedback = byId("quote-feedback");
+    if (feedback) feedback.textContent = "Project details cleared. Choose a service to continue.";
     quoteItems = [];
     quantity.value = "1";
     scope.value = "";
@@ -959,6 +1010,7 @@ function initQuotePage() {
     modifierGrid.querySelectorAll("input").forEach((input) => {
       input.checked = false;
     });
+    renderSelectedItems();
     renderPreview();
   });
 
@@ -967,16 +1019,18 @@ function initQuotePage() {
       if (input === search) renderServices();
       renderPreview();
     });
-    input.addEventListener("change", renderPreview);
+    if (input === photos) input.addEventListener("change", renderPreview);
   });
 
   copyButton.addEventListener("click", async () => {
     const text = buildSummaryText();
     try {
       await navigator.clipboard.writeText(text);
-      copyButton.textContent = "Copied";
+      copyButton.textContent = "Summary copied";
+      const feedback = byId("quote-feedback");
+      if (feedback) feedback.textContent = "Planning summary copied. You can paste it into a message.";
       window.setTimeout(() => {
-        copyButton.textContent = "Copy Range Summary";
+        copyButton.textContent = "Copy range summary";
       }, 1400);
     } catch {
       window.prompt("Copy quote summary", text);
@@ -987,6 +1041,7 @@ function initQuotePage() {
   renderSubcategories();
   renderServices();
   renderModifiers();
+  renderSelectedItems();
   renderPreview();
 }
 
