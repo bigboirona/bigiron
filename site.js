@@ -569,18 +569,41 @@ function initContactPage() {
   const submitButton = form.querySelector("button[type='submit']");
   const params = new URLSearchParams(window.location.search);
   const attribution = currentAttribution();
+  const serviceControl = form.querySelector("select[name='serviceType']");
+  const messageControl = form.querySelector("textarea[name='message']");
+  let holidayPrefill = null;
+  const heading = byId("contact-heading");
+  const scopeCopy = byId("contact-scope-copy");
+  const footerScope = byId("contact-footer-scope");
+  const originalCopy = [heading, scopeCopy, footerScope].map(element => element?.innerHTML);
+  function renderContactScope() {
+    const holiday = serviceControl?.value === "Holiday lights / annual service";
+    if (!holiday && holidayPrefill !== null && messageControl?.value === holidayPrefill) messageControl.value = "";
+    if (heading) heading.innerHTML = holiday ? "Plan this year.<br />And next year." : originalCopy[0];
+    if (scopeCopy) {
+      if (holiday) scopeCopy.textContent = "Choose your lights and tell us about your home. You own the lights. Our annual plan includes one setup and removal per covered season, plus Big Iron storage; next season's work and price are planned and reconfirmed under your annual terms. Prefer to store them yourself? Request a custom quote. We use removable clips and existing outdoor plugs, with no permanent mounts, building penetrations or wiring changes.";
+      else scopeCopy.innerHTML = originalCopy[1];
+    }
+    if (footerScope) {
+      if (holiday) footerScope.textContent = "This holiday offer covers removable seasonal decorating only, without structural or electrical alterations. Other repair requests remain subject to the eligible minor-work scope.";
+      else footerScope.innerHTML = originalCopy[2];
+    }
+  }
   if (params.get("service") === "holiday-lights") {
     const serviceType = form.querySelector("select[name='serviceType']");
     const message = form.querySelector("textarea[name='message']");
     if (serviceType && !serviceType.value) serviceType.value = "Holiday lights / annual service";
     if (message && !message.value.trim()) {
-      const lines = ["I'd like a quote for an annual holiday-light service with setup and takedown."];
+      const lines = ["I'd like a holiday-light quote. The annual plan includes one setup and removal per covered season, plus Big Iron storage; next season's work and price are planned and reconfirmed under the annual terms. Customer storage receives a custom quote."];
       for (const [key, label] of [["season", "Holidays"], ["look", "Look"], ["lights", "Lights"], ["storage", "Storage"]]) {
         const value = (params.get(key) || "").replace(/[\x00-\x1f]/g, " ").trim().slice(0, 120);
         if (value) lines.push(`${label}: ${value}`);
       }
+      if (!params.get("storage")) lines.push("Storage: Big Iron storage included in the annual plan.");
+      lines.push("Lights remain customer-owned. Seasonal decorating uses removable clips and existing outdoor plugs only; no permanent mounts, building penetrations or wiring changes.");
       lines.push("Property/display size and access notes: ");
       message.value = lines.join("\n");
+      holidayPrefill = message.value;
     }
   }
   if (params.get("from") === "quote") {
@@ -594,6 +617,9 @@ function initContactPage() {
       serviceType.value = "Repairs";
     }
   }
+
+  renderContactScope();
+  serviceControl?.addEventListener("change", renderContactScope);
 
   let submissionId = newSubmissionId("contact");
   form.addEventListener("submit", async (event) => {
@@ -638,6 +664,7 @@ function initContactPage() {
       window.bigIronTrackLead?.(receipt, "contact_request");
       submissionId = newSubmissionId("contact");
       form.reset();
+      renderContactScope();
     }
   });
 }
