@@ -7,6 +7,28 @@
   const dialog = document.getElementById('qr-dialog');
   const showQr = document.getElementById('show-qr');
   const closeQr = document.getElementById('close-qr');
+  let preparedFile = null;
+
+  const prepareCardPhoto = async () => {
+    if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function' || typeof File !== 'function' || typeof AbortController !== 'function') return;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+      const imageUrl = new URL('big-iron-card-3d-r6.png', document.baseURI);
+      if (imageUrl.origin !== window.location.origin) return;
+      const response = await fetch(imageUrl, {mode: 'same-origin', credentials: 'omit', cache: 'force-cache', signal: controller.signal});
+      const maxBytes = 2 * 1024 * 1024;
+      if (!response.ok || Number(response.headers.get('Content-Length')) > maxBytes) return;
+      const image = await response.blob();
+      if (image.type !== 'image/png' || !image.size || image.size > maxBytes) return;
+      const file = new File([image], 'Big-Iron-Construction-Card.png', {type: 'image/png'});
+      if (navigator.canShare({files: [file]}) && navigator.canShare({files: [file], text: url})) preparedFile = file;
+    } catch (_) {
+      // The link and manual image download still work if preparation fails.
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
 
   const copyLink = async (output, container) => {
     output.textContent = '';
@@ -33,11 +55,32 @@
     button.addEventListener('click', async () => {
       status.textContent = '';
       if (navigator.share) {
+        const optionsWereOpen = options.open;
+        let photoPayload = null;
+        if (preparedFile) {
+          try {
+            const candidate = {files: [preparedFile], text: url};
+            if (navigator.canShare({files: [preparedFile]}) && navigator.canShare(candidate)) photoPayload = candidate;
+          } catch (_) {
+            // A changed device policy can still leave ordinary link sharing.
+          }
+        }
+        if (!photoPayload) {
+          status.textContent = 'Link only. Save the card image below to add the photo.';
+          options.open = true;
+        }
         try {
-          await navigator.share({title: 'Big Iron Construction', text: 'Keep Big Iron handy for the next project.', url});
+          // Call native Share before any await so Safari keeps the tap gesture.
+          await navigator.share(photoPayload || {title: 'Big Iron Construction', text: 'Keep Big Iron handy for the next project.', url});
           return;
         } catch (error) {
-          if (error?.name === 'AbortError') return;
+          if (error?.name === 'AbortError') {
+            status.textContent = '';
+            options.open = optionsWereOpen;
+            return;
+          }
+          if (photoPayload) preparedFile = null;
+          options.open = true;
         }
       }
       await copyLink(status, options);
@@ -98,4 +141,6 @@
     const manual = options.querySelector('.manual-link');
     if (manual) manual.hidden = false;
   }
+  // Start only after the controls are bound; slow/offline loads never block them.
+  prepareCardPhoto();
 })();
