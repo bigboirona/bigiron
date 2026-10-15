@@ -7,10 +7,14 @@
   const dialog = document.getElementById('qr-dialog');
   const showQr = document.getElementById('show-qr');
   const closeQr = document.getElementById('close-qr');
+  const photoButton = document.getElementById('share-photo-card');
   let preparedFile = null;
+  let preparationStarted = false;
 
   const prepareCardPhoto = async () => {
+    if (preparationStarted) return;
     if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function' || typeof File !== 'function' || typeof AbortController !== 'function') return;
+    preparationStarted = true;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
@@ -55,6 +59,27 @@
     button.addEventListener('click', async () => {
       status.textContent = '';
       if (navigator.share) {
+        try {
+          // Share the website itself so the selected app can make its link card.
+          await navigator.share({url});
+          return;
+        } catch (error) {
+          if (error?.name === 'AbortError') return;
+        }
+      }
+      await copyLink(status, options);
+    });
+  }
+
+  if (photoButton && status && options && typeof navigator.share === 'function' && typeof navigator.canShare === 'function' && typeof File === 'function' && typeof AbortController === 'function') {
+    photoButton.hidden = false;
+    // Only the explicit alternative-sharing section prepares an attachment.
+    options.addEventListener('toggle', () => {
+      if (options.open) prepareCardPhoto();
+    });
+    photoButton.addEventListener('click', async () => {
+      status.textContent = '';
+      if (navigator.share) {
         const optionsWereOpen = options.open;
         let photoPayload = null;
         if (preparedFile) {
@@ -71,7 +96,7 @@
         }
         try {
           // Call native Share before any await so Safari keeps the tap gesture.
-          await navigator.share(photoPayload || {title: 'Big Iron Construction', text: 'Keep Big Iron handy for the next project.', url});
+          await navigator.share(photoPayload || {url});
           return;
         } catch (error) {
           if (error?.name === 'AbortError') {
@@ -141,6 +166,4 @@
     const manual = options.querySelector('.manual-link');
     if (manual) manual.hidden = false;
   }
-  // Start only after the controls are bound; slow/offline loads never block them.
-  prepareCardPhoto();
 })();
