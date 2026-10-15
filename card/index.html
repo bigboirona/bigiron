@@ -9,24 +9,31 @@
   <link rel="canonical" href="https://bigironconstruction.co/card/">
   <link rel="icon" type="image/png" href="/assets/big-iron-logo.png">
   <link rel="apple-touch-icon" sizes="512x512" href="https://bigironconstruction.co/card/big-iron-logo.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="Big Iron Card">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Save our contact">
   <meta property="og:site_name" content="Big Iron Construction">
   <meta property="og:description" content="One place for our number, website and Yelp. Keep us handy for the next project.">
   <meta property="og:url" content="https://bigironconstruction.co/card/">
-  <meta property="og:image" content="https://bigironconstruction.co/card/big-iron-logo.png">
-  <meta property="og:image:width" content="512">
-  <meta property="og:image:height" content="512">
-  <meta property="og:image:alt" content="Big Iron Construction logo">
-  <link rel="stylesheet" href="card.css?v=20261014-1">
-  <script defer src="card.js?v=20261014-1"></script>
+  <meta property="og:image" content="https://bigironconstruction.co/card/big-iron-card-3d-r6.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:alt" content="Big Iron Construction contact card. Bay Area and Central Coast. (831) 291-3272.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://bigironconstruction.co/card/big-iron-card-3d-r6.png">
+  <link rel="stylesheet" href="card.css?v=20261015-r6">
+  <script defer src="card.js?v=20261015-r6"></script>
 </head>
 <body>
   <main class="contact-card" aria-labelledby="company-name">
     <header class="card-header">
-      <img class="logo" src="/assets/big-iron-logo.png" width="83" height="77" alt="Big Iron logo">
-      <p class="eyebrow">Bay Area &amp; Central Coast</p>
-      <h1 id="company-name">Big Iron<span>Construction</span></h1>
+      <h1 id="company-name" class="visually-hidden">Big Iron Construction</h1>
+      <a class="card-artwork" href="Big-Iron-Construction.vcf" aria-label="Save Big Iron Construction to your contacts">
+        <img src="big-iron-card-3d-r6.png" width="1200" height="630" alt="Big Iron Construction. Bay Area and Central Coast. (831) 291-3272. Save our contact." fetchpriority="high">
+      </a>
       <p class="intro">Save us for the next project.</p>
     </header>
 
@@ -34,6 +41,24 @@
       <span>Save our contact</span><span class="plus" aria-hidden="true">+</span>
     </a>
     <p class="save-note">Open the contact card, then choose Add or Save.</p>
+
+    <div class="sharing-actions" role="group" aria-label="Share the Big Iron card">
+      <button id="share-card" type="button" hidden>Share card <span aria-hidden="true">↗</span></button>
+      <button id="show-qr" type="button" aria-haspopup="dialog" aria-controls="qr-dialog" hidden>Show QR <span aria-hidden="true">▦</span></button>
+    </div>
+    <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+    <noscript><p class="qr-fallback"><a href="card-qr.svg">Open our QR code</a></p></noscript>
+    <details id="share-options" class="share-options">
+      <summary>Copy or text the link</summary>
+      <p>Copy the link, then paste it into a text.</p>
+      <div class="fallback-actions">
+        <button type="button" data-copy-card hidden>Copy link</button>
+        <a href="sms:">Open Messages</a>
+      </div>
+      <label class="manual-link" hidden>Card link
+        <input type="url" value="https://bigironconstruction.co/card/" readonly aria-label="Card link to copy">
+      </label>
+    </details>
 
     <div class="quick-actions" aria-label="Call or text Big Iron">
       <a href="tel:+18312913272">Call us <span aria-hidden="true">↗</span></a>
@@ -49,11 +74,32 @@
 
     <a class="estimate-link" href="https://bigironconstruction.co/contact.html">Have something in mind? Request an estimate <span aria-hidden="true">↗</span></a>
     <footer>
-      <button id="share-card" type="button" hidden>Share this card <span aria-hidden="true">↗</span></button>
-      <p id="share-status" role="status" aria-live="polite"></p>
+      <details class="home-screen-help">
+        <summary>Add to Home Screen</summary>
+        <p><strong>iPhone:</strong> In Safari, open Share, then Add to Home Screen.</p>
+        <p><strong>Android:</strong> In Chrome, open the menu, then Add to Home screen or Install app.</p>
+      </details>
       <a class="card-address" href="https://bigironconstruction.co/card/">bigironconstruction.co/card</a>
       <p class="scope-link"><a href="https://bigironconstruction.co/small-fixes.html">Current service scope</a> <span aria-hidden="true">·</span> <a href="https://bigironconstruction.co/privacy.html">Privacy</a></p>
     </footer>
   </main>
+
+  <dialog id="qr-dialog" aria-labelledby="qr-title" aria-describedby="qr-note">
+    <div class="qr-dialog-header">
+      <h2 id="qr-title">Share Big Iron</h2>
+      <button id="close-qr" type="button" autofocus>Close <span aria-hidden="true">×</span></button>
+    </div>
+    <p id="qr-note">Point another phone’s camera at this code to open our card.</p>
+    <img class="qr-code" src="card-qr.svg" width="296" height="296" alt="QR code for https://bigironconstruction.co/card/">
+    <a class="qr-address" href="https://bigironconstruction.co/card/">bigironconstruction.co/card</a>
+    <div class="fallback-actions">
+      <button type="button" data-copy-card>Copy link</button>
+      <a href="sms:">Open Messages</a>
+    </div>
+    <p id="qr-status" class="share-status" role="status" aria-live="polite"></p>
+    <label class="manual-link" hidden>Card link
+      <input type="url" value="https://bigironconstruction.co/card/" readonly aria-label="Card link to copy">
+    </label>
+  </dialog>
 </body>
 </html>

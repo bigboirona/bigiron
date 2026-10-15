@@ -1,0 +1,15 @@
+{
+  "id": "/card/",
+  "name": "Big Iron Card",
+  "short_name": "Big Iron Card",
+  "description": "Save and share Big Iron Construction's contact card.",
+  "start_url": "/card/",
+  "scope": "/card/",
+  "display": "standalone",
+  "background_color": "#faf9f6",
+  "theme_color": "#273a31",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "big-iron-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}
