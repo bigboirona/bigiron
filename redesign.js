@@ -2,6 +2,124 @@
 (() => {
   "use strict";
   document.documentElement.classList.add("js");
+
+  function initializeProjectSlideshow(root) {
+    const stage = root.querySelector(".project-slideshow-stage");
+    const slides = [...root.querySelectorAll("[data-project-slide]")];
+    const previous = root.querySelector("[data-slideshow-prev]");
+    const next = root.querySelector("[data-slideshow-next]");
+    const toggle = root.querySelector("[data-slideshow-toggle]");
+    const count = root.querySelector("[data-slideshow-count]");
+    if (!stage || slides.length < 2 || !previous || !next || !toggle || !count) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let current = 0;
+    let paused = reducedMotion.matches;
+    let motionOptIn = false;
+    let hovered = false;
+    let focused = false;
+    let visible = false;
+    let timer;
+    let pointerStart;
+
+    function schedule() {
+      window.clearTimeout(timer);
+      if (paused || hovered || focused || !visible || document.hidden || (reducedMotion.matches && !motionOptIn)) return;
+      timer = window.setTimeout(() => move(1, false), 6000);
+    }
+
+    function render(manual = false) {
+      slides.forEach((slide, index) => { slide.hidden = index !== current; });
+      count.setAttribute("aria-live", manual ? "polite" : "off");
+      count.textContent = `${current + 1} / ${slides.length}`;
+      toggle.textContent = paused ? "Play slideshow" : "Pause slideshow";
+      schedule();
+    }
+
+    function move(direction, manual = true) {
+      current = (current + direction + slides.length) % slides.length;
+      render(manual);
+    }
+
+    slides.forEach((slide, index) => {
+      slide.setAttribute("role", "group");
+      slide.setAttribute("aria-roledescription", "slide");
+      slide.setAttribute("aria-label", `${index + 1} of ${slides.length}`);
+    });
+    stage.tabIndex = 0;
+    stage.setAttribute("aria-label", "Project photographs. Use the left and right arrow keys to browse.");
+    stage.setAttribute("aria-live", "off");
+    count.setAttribute("aria-atomic", "true");
+    previous.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+    toggle.addEventListener("click", () => {
+      paused = !paused;
+      motionOptIn = !paused;
+      render();
+    });
+    root.addEventListener("keydown", event => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      move(event.key === "ArrowLeft" ? -1 : 1);
+    });
+    root.addEventListener("pointerenter", event => {
+      if (event.pointerType !== "mouse") return;
+      hovered = true;
+      schedule();
+    });
+    root.addEventListener("pointerleave", () => { hovered = false; schedule(); });
+    root.addEventListener("focusin", () => { focused = true; schedule(); });
+    root.addEventListener("focusout", () => {
+      window.requestAnimationFrame(() => {
+        focused = root.contains(document.activeElement);
+        schedule();
+      });
+    });
+
+    // Native vertical scrolling remains available during horizontal touch gestures.
+    stage.addEventListener("pointerdown", event => {
+      if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
+      pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    });
+    stage.addEventListener("pointerup", event => {
+      if (!pointerStart || pointerStart.id !== event.pointerId) return;
+      const deltaX = event.clientX - pointerStart.x;
+      const deltaY = event.clientY - pointerStart.y;
+      pointerStart = undefined;
+      if (Math.abs(deltaX) >= 45 && Math.abs(deltaX) > Math.abs(deltaY) * 1.4) move(deltaX < 0 ? 1 : -1);
+    });
+    stage.addEventListener("pointercancel", () => { pointerStart = undefined; });
+    stage.addEventListener("dragstart", event => event.preventDefault());
+
+    reducedMotion.addEventListener("change", event => {
+      motionOptIn = false;
+      if (event.matches) paused = true;
+      render();
+    });
+    document.addEventListener("visibilitychange", schedule);
+    if (typeof IntersectionObserver === "function") {
+      const observer = new IntersectionObserver(entries => {
+        visible = entries[0].isIntersecting && entries[0].intersectionRatio >= 0.2;
+        schedule();
+      }, { threshold: [0, 0.2] });
+      observer.observe(stage);
+    } else {
+      const checkVisibility = () => {
+        const bounds = stage.getBoundingClientRect();
+        visible = bounds.top < window.innerHeight && bounds.bottom > 0;
+        schedule();
+      };
+      window.addEventListener("scroll", checkVisibility, { passive: true });
+      window.addEventListener("resize", checkVisibility);
+      checkVisibility();
+    }
+
+    root.setAttribute("aria-roledescription", "carousel");
+    root.dataset.slideshowReady = "true";
+    [previous, toggle, count, next].forEach(control => { control.hidden = false; });
+    render();
+  }
+
   function initialize() {
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.querySelector(".site-nav");
@@ -36,6 +154,8 @@
         observer.observe(card, { attributes: true, attributeFilter: ["class"] });
       });
     }
+
+    document.querySelectorAll("[data-project-slideshow]").forEach(initializeProjectSlideshow);
 
     const gallery = document.querySelector("[data-project-gallery]");
     const filters = document.querySelectorAll("[data-gallery-filter]");
@@ -73,7 +193,7 @@
       image.src = link.href;
       image.alt = link.querySelector("img")?.alt || link.dataset.title || "Big Iron project photograph";
       title.textContent = link.dataset.title;
-      caption.textContent = link.dataset.caption || "Big Iron Construction · actual project photograph";
+      caption.textContent = link.dataset.caption || "Big Iron Construction";
       position.textContent = `${current + 1} / ${activeLinks.length}`;
       previous.disabled = activeLinks.length < 2;
       next.disabled = activeLinks.length < 2;
