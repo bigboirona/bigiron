@@ -18,7 +18,7 @@
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
-      const imageUrl = new URL('big-iron-card-services-20261020.png?v=9b2eaf186be0', document.baseURI);
+      const imageUrl = new URL('business-card-license-1164001-20261102.png?v=deb51f320564', document.baseURI);
       if (imageUrl.origin !== window.location.origin) return;
       const response = await fetch(imageUrl, {mode: 'same-origin', credentials: 'omit', cache: 'force-cache', signal: controller.signal});
       const maxBytes = 2 * 1024 * 1024;
