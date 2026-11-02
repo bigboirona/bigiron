@@ -585,7 +585,7 @@ function initContactPage() {
       else scopeCopy.innerHTML = originalCopy[1];
     }
     if (footerScope) {
-      if (holiday) footerScope.textContent = "This holiday offer covers removable seasonal decorating only, without structural or electrical alterations. Other repair requests remain subject to the eligible minor-work scope.";
+      if (holiday) footerScope.textContent = "Big Iron Handyman LLC · Licensed General Building Contractor · CSLB #1164001. This holiday offer covers removable seasonal decorating only, without structural or electrical alterations.";
       else footerScope.innerHTML = originalCopy[2];
     }
   }
