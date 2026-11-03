@@ -2,75 +2,104 @@
   "use strict";
 
   const measurementId = "G-XT8VM244F8";
+  const adsId = "AW-17881504685";
+  const adsDestination = "AW-17881504685/w53tCN7K8rAdEK23yM5C";
   const consentKey = "bigiron_analytics_consent";
+  const adsConsentKey = "bigiron_ads_measurement_consent";
   const validChoices = new Set(["accepted", "declined"]);
-  let pageChoice = null;
+  const pageChoices = new Map();
   const recordedLeadReceipts = new Set();
+  const recordedAdReceipts = new Set();
+  let tagInitialized = false;
+  let tagLoaded = false;
+  let adsConfigured = false;
 
-  function readChoice() {
-    if (validChoices.has(pageChoice)) return pageChoice;
+  function readChoice(key) {
+    if (pageChoices.has(key)) return pageChoices.get(key);
     try {
-      const choice = localStorage.getItem(consentKey);
-      return validChoices.has(choice) ? choice : pageChoice;
+      const choice = localStorage.getItem(key);
+      return validChoices.has(choice) ? choice : null;
     } catch {
-      return pageChoice;
+      return null;
     }
   }
 
-  function saveChoice(choice) {
-    pageChoice = choice;
+  function saveChoice(key, choice) {
+    pageChoices.set(key, choice);
     try {
-      localStorage.setItem(consentKey, choice);
+      localStorage.setItem(key, choice);
     } catch {
-      // Consent still applies for this page even when storage is unavailable.
+      // Current choices still apply when browser storage is unavailable.
     }
   }
 
-  function loadAnalytics() {
-    const wasDisabled = window[`ga-disable-${measurementId}`] === true;
-    window[`ga-disable-${measurementId}`] = false;
-    if (window.bigIronAnalyticsLoaded) {
-      if (wasDisabled) window.gtag("consent", "update", { analytics_storage: "granted" });
-      return;
+  function globalPrivacyControl() {
+    return window.navigator?.globalPrivacyControl === true;
+  }
+
+  function adsAllowed() {
+    if (globalPrivacyControl()) {
+      if (readChoice(adsConsentKey) !== "declined") saveChoice(adsConsentKey, "declined");
+      return false;
     }
-    window.bigIronAnalyticsLoaded = true;
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = window.gtag || function gtag() {
-      window.dataLayer.push(arguments);
-    };
-    window.gtag("consent", "default", {
-      analytics_storage: "granted",
-      ad_storage: "denied",
-      ad_user_data: "denied",
+    return readChoice(adsConsentKey) === "accepted";
+  }
+
+  function applyChoices() {
+    const analytics = readChoice(consentKey) === "accepted";
+    const ads = adsAllowed();
+    window[`ga-disable-${measurementId}`] = !analytics;
+    if (!tagInitialized && !analytics && !ads) return;
+
+    if (!tagInitialized) {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function gtag() {
+        window.dataLayer.push(arguments);
+      };
+      // Defaults precede every config/event; no library loads without opt-in.
+      window.gtag("consent", "default", {
+        analytics_storage: "denied", ad_storage: "denied",
+        ad_user_data: "denied", ad_personalization: "denied",
+      });
+      window.gtag("set", "allow_ad_personalization_signals", false);
+      window.gtag("set", "ads_data_redaction", true);
+      window.gtag("js", new Date());
+      tagInitialized = true;
+    }
+    window.gtag("consent", "update", {
+      analytics_storage: analytics ? "granted" : "denied",
+      ad_storage: ads ? "granted" : "denied",
+      ad_user_data: ads ? "granted" : "denied",
       ad_personalization: "denied",
     });
-    window.gtag("js", new Date());
-    window.gtag("config", measurementId, {
-      allow_google_signals: false,
-      allow_ad_personalization_signals: false,
-    });
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
-    document.head.appendChild(script);
+    if (analytics && !window.bigIronAnalyticsLoaded) {
+      window.gtag("config", measurementId, {
+        allow_google_signals: false, allow_ad_personalization_signals: false,
+      });
+      window.bigIronAnalyticsLoaded = true;
+    }
+    if (ads && !adsConfigured) {
+      window.gtag("config", adsId, { allow_ad_personalization_signals: false });
+      adsConfigured = true;
+    }
+    if (!tagLoaded) {
+      const script = document.createElement("script");
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(analytics ? measurementId : adsId)}`;
+      document.head.appendChild(script);
+      tagLoaded = true;
+    }
   }
 
   function removeBanner() {
     document.getElementById("analytics-consent")?.remove();
   }
 
-  function setChoice(choice) {
-    saveChoice(choice);
+  function setChoices(analytics, ads) {
+    saveChoice(consentKey, analytics ? "accepted" : "declined");
+    saveChoice(adsConsentKey, ads && !globalPrivacyControl() ? "accepted" : "declined");
     removeBanner();
-    if (choice === "accepted") {
-      loadAnalytics();
-      return;
-    }
-    window[`ga-disable-${measurementId}`] = true;
-    if (typeof window.gtag === "function") {
-      window.gtag("consent", "update", { analytics_storage: "denied" });
-    }
+    applyChoices();
   }
 
   function showBanner() {
@@ -78,38 +107,43 @@
     const banner = document.createElement("section");
     banner.id = "analytics-consent";
     banner.className = "analytics-consent";
-    banner.setAttribute("role", "dialog");
-    banner.setAttribute("aria-label", "Analytics choice");
+    banner.setAttribute("role", "region");
+    banner.setAttribute("aria-label", "Optional measurement choices");
     banner.innerHTML = `
       <div>
-        <strong>Optional website analytics</strong>
-        <p>Big Iron uses Google Analytics only if you accept. It helps us understand site visits and form completion; we do not send your form details to Analytics. <a href="${window.location.pathname.includes("/handyman-") ? "../privacy.html" : "privacy.html"}">Privacy notice</a></p>
+        <strong>Optional website measurement</strong>
+        <p>Choose either, both, or neither. The site and request forms work either way. <a href="${window.location.pathname.includes("/handyman-") ? "../privacy.html" : "privacy.html"}">Privacy notice</a></p>
+        <div class="measurement-choices">
+          <label><input type="checkbox" data-measurement-analytics> <span>Website analytics: allow Google Analytics to measure visits and completed requests.</span></label>
+          <label><input type="checkbox" data-measurement-ads> <span>Ad measurement: allow Google Ads cookies and click information to measure which ads lead to a completed request. No form details or personalized ads.</span></label>
+        </div>
+        <p data-measurement-gpc hidden>Your Global Privacy Control signal keeps ad measurement off.</p>
       </div>
       <div class="analytics-consent-actions">
-        <button type="button" class="button button-secondary" data-consent-choice="declined">Decline</button>
-        <button type="button" class="button button-primary" data-consent-choice="accepted">Accept analytics</button>
+        <button type="button" class="button button-secondary" data-consent-decline>Decline all</button>
+        <button type="button" class="button button-primary" data-consent-save>Save choices</button>
       </div>
     `;
-    banner.querySelectorAll("[data-consent-choice]").forEach((button) => {
-      button.addEventListener("click", () => setChoice(button.dataset.consentChoice));
-    });
+    const analytics = banner.querySelector("[data-measurement-analytics]");
+    const ads = banner.querySelector("[data-measurement-ads]");
+    analytics.checked = readChoice(consentKey) === "accepted";
+    ads.checked = adsAllowed();
+    ads.disabled = globalPrivacyControl();
+    banner.querySelector("[data-measurement-gpc]").hidden = !globalPrivacyControl();
+    banner.querySelector("[data-consent-decline]").addEventListener("click", () => setChoices(false, false));
+    banner.querySelector("[data-consent-save]").addEventListener("click", () => setChoices(analytics.checked, ads.checked));
     document.body.appendChild(banner);
   }
 
   function initialize() {
-    const choice = readChoice();
-    if (choice === "accepted") loadAnalytics();
-    if (!choice) showBanner();
-
+    const analyticsChoice = readChoice(consentKey);
+    const adsChoice = readChoice(adsConsentKey);
+    applyChoices();
+    // Legacy analytics acceptance never supplies a positive Ads choice.
+    if (!analyticsChoice || !adsChoice) showBanner();
     document.querySelectorAll("[data-analytics-consent-reset]").forEach((control) => {
       control.addEventListener("click", (event) => {
         event.preventDefault();
-        try {
-          localStorage.removeItem(consentKey);
-        } catch {
-          // The banner can still be shown without persistent storage.
-        }
-        pageChoice = null;
         showBanner();
         document.getElementById("analytics-consent")?.scrollIntoView({ behavior: "smooth" });
       });
@@ -117,25 +151,49 @@
   }
 
   window.bigIronTrackEvent = (eventName, parameters = {}) => {
-    if (readChoice() !== "accepted") return false;
-    loadAnalytics();
-    window.gtag("event", eventName, parameters);
-    return true;
+    if (readChoice(consentKey) !== "accepted") return false;
+    try {
+      applyChoices();
+      // An Analytics event must not broadcast to the Ads destination.
+      window.gtag("event", eventName, { ...parameters, send_to: measurementId });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   window.bigIronTrackLead = (receipt, formType) => {
     const prefix = { contact_request: "contact", booking_request: "booking" }[formType];
     if (!prefix || receipt?.ok !== true || typeof receipt.duplicate !== "boolean"
         || typeof receipt.intake_row_id !== "string"
-        || !new RegExp(`^web-${prefix}_[A-Za-z0-9_-]{4,72}$`).test(receipt.intake_row_id)
-        || recordedLeadReceipts.has(receipt.intake_row_id)) return false;
-    // The receipt ID stays in this page's memory for deduplication. Neither it
-    // nor any customer field is sent to Analytics, even if present in receipt.
-    const recorded = window.bigIronTrackEvent("generate_lead", {
-      form_type: formType,
-      page_path: window.location.pathname,
-    });
-    if (recorded) recordedLeadReceipts.add(receipt.intake_row_id);
+        || !new RegExp(`^web-${prefix}_[A-Za-z0-9_-]{4,72}$`).test(receipt.intake_row_id)) return false;
+
+    let recorded = false;
+    if (!recordedLeadReceipts.has(receipt.intake_row_id)) {
+      const analyticsRecorded = window.bigIronTrackEvent("generate_lead", {
+        form_type: formType, page_path: window.location.pathname,
+      });
+      if (analyticsRecorded) recordedLeadReceipts.add(receipt.intake_row_id);
+      recorded = analyticsRecorded;
+    }
+    // Current generated receipt IDs are opaque and under Google's 64-character
+    // transaction limit. Never truncate a longer ID and risk a collision.
+    if (adsAllowed() && receipt.intake_row_id.length <= 64
+        && !recordedAdReceipts.has(receipt.intake_row_id)) {
+      try {
+        applyChoices();
+        window.gtag("event", "conversion", {
+          send_to: adsDestination, value: 0, currency: "USD",
+          transaction_id: receipt.intake_row_id,
+        });
+        recordedAdReceipts.add(receipt.intake_row_id);
+        recorded = true;
+      } catch {
+        // Optional measurement must not interrupt successful request delivery.
+      }
+    } else if (globalPrivacyControl()) {
+      try { applyChoices(); } catch { /* Keep an opt-out effective. */ }
+    }
     return recorded;
   };
 
