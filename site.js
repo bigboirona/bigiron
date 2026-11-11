@@ -44,13 +44,13 @@ let quoteCatalog = {
     "Electrical",
   ],
   services: [
-    { id: "general_not_sure", category: "General", subcategory: "General / Not Sure", name: "General Handyman / Not Sure Yet", unit: "job", low: 250, high: 900, min: 250, included: 1, assumptions: "Use this when the project is mixed or unclear. Photos and a short list will narrow the range." },
+    { id: "general_not_sure", category: "General", subcategory: "General / Not Sure", name: "General Construction / Not Sure Yet", unit: "job", low: 250, high: 900, min: 250, included: 1, assumptions: "Use this when the project is mixed or unclear. Photos and a short list will narrow the range." },
     { id: "other_custom_scope", category: "General", subcategory: "Other / Custom", name: "Other / Custom Scope", unit: "job", low: 250, high: 1200, min: 250, included: 1, photos: true, assumptions: "Use this for oddball one-off work that does not fit the list, like satellite dish removal, small demo, removal, mounting, repair, or cleanup. Photos and notes are required to tighten the range." },
     { id: "demo_removal", category: "General", subcategory: "Demo / Removal", name: "Small Demo / Removal", unit: "job", low: 300, high: 1200, min: 300, included: 1, photos: true, assumptions: "Use this for small removal or demo work like satellite dish removal, old fixture removal, small tear-out, haul-off prep, or cleanup. Dump fees and roof/ladder access can change the range." },
     { id: "general_punch_list", category: "General", subcategory: "Punch List", name: "General Punch List", unit: "job", low: 250, high: 600, min: 250, included: 1, assumptions: "Assumes 2-4 small items, basic tools, normal access, and no heavy material handling." },
-    { id: "hourly_handyman", category: "General", subcategory: "Punch List", name: "Hourly Handyman Work", unit: "hour", low: 250, high: 300, unitLow: 100, unitHigh: 150, min: 250, included: 2, assumptions: "Good for open-ended punch-list work. $250 minimum visit, roughly covering the first two hours, then about $100-$150/hr depending on scope." },
-    { id: "half_day", category: "General", subcategory: "Punch List", name: "Half-Day Handyman Block", unit: "job", low: 575, high: 750, min: 575, included: 1, assumptions: "Four hours on site. Materials are separate unless listed." },
-    { id: "full_day", category: "General", subcategory: "Punch List", name: "Full-Day Handyman Block", unit: "job", low: 1000, high: 1400, min: 1000, included: 1, assumptions: "Eight hours on site. Best for turnover lists or several bundled tasks." },
+    { id: "hourly_handyman", category: "General", subcategory: "Punch List", name: "Hourly Repair & Improvement Work", unit: "hour", low: 250, high: 300, unitLow: 100, unitHigh: 150, min: 250, included: 2, assumptions: "Good for open-ended punch-list work. $250 minimum visit, roughly covering the first two hours, then about $100-$150/hr depending on scope." },
+    { id: "half_day", category: "General", subcategory: "Punch List", name: "Half-Day Project Work", unit: "job", low: 575, high: 750, min: 575, included: 1, assumptions: "Four hours on site. Materials are separate unless listed." },
+    { id: "full_day", category: "General", subcategory: "Punch List", name: "Full-Day Project Work", unit: "job", low: 1000, high: 1400, min: 1000, included: 1, assumptions: "Eight hours on site. Best for turnover lists or several bundled tasks." },
     { id: "bathroom_recaulk", category: "General", subcategory: "Caulking", name: "Bathroom Re-Caulk", unit: "job", low: 250, high: 500, min: 250, included: 1, assumptions: "Standard tub, shower, sink, or vanity caulk. Tile repair and grout are separate." },
     { id: "kitchen_recaulk", category: "General", subcategory: "Caulking", name: "Kitchen Re-Caulk", unit: "job", low: 250, high: 500, min: 250, included: 1, assumptions: "Standard kitchen sink, counter, backsplash, or appliance-edge caulk. Water damage, tile repair, and grout are separate." },
     { id: "exterior_not_sure", category: "Exterior", subcategory: "General / Not Sure", name: "Exterior Repair / Not Sure Yet", unit: "job", low: 350, high: 1600, min: 350, included: 1, photos: true, assumptions: "Use this for exterior problem spots when the exact repair type is not clear yet. Photos help narrow it quickly." },
@@ -180,7 +180,24 @@ async function loadQuoteCatalog() {
         && Array.isArray(catalog.services)
         && Array.isArray(catalog.modifiers)
       ) {
-        quoteCatalog = catalog;
+        const constructionNames = {
+          "General Handyman": "General Construction",
+          "General Handyman / Not Sure Yet": "General Construction / Not Sure Yet",
+          "Hourly Handyman Work": "Hourly Repair & Improvement Work",
+          "Half-Day Handyman Block": "Half-Day Project Work",
+          "Full-Day Handyman Block": "Full-Day Project Work",
+        };
+        const constructionLabel = label => constructionNames[label] || label;
+        quoteCatalog = {
+          ...catalog,
+          categories: catalog.categories.map(constructionLabel),
+          services: catalog.services.map(service => ({
+            ...service,
+            name: constructionLabel(service.name),
+            category: constructionLabel(service.category),
+            subcategory: constructionLabel(service.subcategory),
+          })),
+        };
         return;
       }
     } catch {
